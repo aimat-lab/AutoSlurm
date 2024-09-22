@@ -42,10 +42,12 @@ def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
         # Extract the job ID from the output:
         if "Submitted" in output:
             job_id = output.strip().split()[-1]
+            print(f"Submitted job {job_id} with dependency (chain-job) {dependency}.")
             return job_id
         else:
             print("Error: Could not find job ID in sbatch output.")
             return None
+
     except subprocess.CalledProcessError as e:
         print(f"Error submitting sbatch job: {e}")
         return None
@@ -105,4 +107,3 @@ if __name__ == "__main__":
             f.write(build_sbatch_file(preamble=config["preamble"], fillers=defaults, dependency=slurm_id if i > 0 else None, command=args.command if i == 0 else None))
 
         slurm_id = launch_sbatch_file(sbatch_file_path, dependency=slurm_id if i > 0 else None)
-        print(f"Launched job {slurm_id} with sbatch file {sbatch_file_path}")
