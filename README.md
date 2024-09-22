@@ -1,6 +1,6 @@
 # Slurm submission helper
 
-<span style="color:red">*This code is under active development, not useable yet.*</span>.
+<span style="color:red">*This code is under active development, not useable yet!*</span>
 
 This submission helper allows you to automatically generate slurm submission scripts and start them for you.
 Supports simple jobs, splitting multiple scripts accross the GPUs of a node, and even chain jobs - all
