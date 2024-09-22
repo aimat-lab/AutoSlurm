@@ -43,7 +43,7 @@ def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
         # Extract the job ID from the output:
         if "Submitted" in output:
             job_id = output.strip().split()[-1]
-            print(f"Submitted job {job_id}" + (f"with dependency (chain-job) {dependency}" if dependency else ""))
+            print(f"Submitted job {job_id}" + (f" with dependency (chain-job) {dependency}" if dependency else ""))
             return job_id
         else:
             print("Error: Could not find job ID in sbatch output.")
