@@ -104,5 +104,5 @@ if __name__ == "__main__":
         with open(sbatch_file_path, "w") as f:
             f.write(build_sbatch_file(preamble=config["preamble"], fillers=defaults, dependency=slurm_id if i > 0 else None, command=args.command if i == 0 else None))
 
-        slurm_id = launch_sbatch_file(sbatch_file_path)
+        slurm_id = launch_sbatch_file(sbatch_file_path, dependency=slurm_id if i > 0 else None)
         print(f"Launched job {slurm_id} with sbatch file {sbatch_file_path}")
