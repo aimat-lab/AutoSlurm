@@ -39,4 +39,4 @@ if __name__ == "__main__":
         slurm_id = os.environ.get("SLURM_JOB_ID", None)
 
         with open(f"{slurm_id}.resume", "w") as f:
-            f.write(f"--start_iter {args.start_iter + args.iters_per_job} --max_iter {args.max_iter} --iters_per_job {args.iters_per_job}")
+            f.write(f"python main.py --start_iter {args.start_iter + args.iters_per_job} --max_iter {args.max_iter} --iters_per_job {args.iters_per_job}")

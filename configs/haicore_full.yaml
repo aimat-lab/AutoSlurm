@@ -9,7 +9,8 @@ preamble: |
   #SBATCH --partition=advanced
   source /home/iti/${USER}/.bashrc
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/miniforge3/lib
-  conda activate coarse_graining_pt2
+  conda activate <env>
 
 defaults:
   job_name: "haicore"
+  env: "fab"
