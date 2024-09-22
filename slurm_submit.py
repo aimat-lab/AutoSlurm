@@ -82,7 +82,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    config_file_path = "configs/" + args.config + ".yaml"
+    dir_path = os.path.dirname(os.path.realpath(__file__)) 
+    config_file_path = os.path.join(dir_path, "configs", args.config + ".yaml")
     config_file = open(config_file_path, "r")
     config = yaml.safe_load(config_file)
     config_file.close()
