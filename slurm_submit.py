@@ -18,9 +18,9 @@ def build_sbatch_file(preamble: str, fillers: dict, dependency: str = None, comm
         preamble += f"\n\n{command}"
     elif dependency:
         preamble += f"\n\n" + "sleep 10"
-        preamble += f"\n" + "command=`cat ${dependency}.resume`"
+        preamble += f"\n" + "resume_command=`cat ${" + dependency + "}.resume`"
         # Run the command:
-        preamble += f"\n" + "eval $command"
+        preamble += f"\n" + "eval $resume_command"
     else:
         raise ValueError("Must specify either a dependency or a command for the sbatch file.")
 
@@ -30,9 +30,10 @@ def build_sbatch_file(preamble: str, fillers: dict, dependency: str = None, comm
 def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
 
     try:
-        commands = ['sbatch', sbatch_file_path]
+        commands = ['sbatch']
         if dependency:
             commands += ["--dependency=afterany:" + dependency]
+        commands += [sbatch_file_path]
 
         result = subprocess.run(commands, capture_output=True, text=True, check=True)
     
