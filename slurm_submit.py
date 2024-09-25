@@ -5,6 +5,15 @@ import datetime
 import subprocess
 
 def build_sbatch_file(preamble: str, fillers: dict, dependency: str = None, command: str= None):
+    """ Builds an sbatch file.
+
+    Args:
+        preamble: The preamble of the sbatch file. Should contain placeholders for the fillers.
+        fillers: A dictionary of key-value pairs to fill in the placeholders in the preamble.
+        dependency: The job ID of the job that this job depends on.
+        command: The command to run in the sbatch file. Only needed if there is no dependency,
+            otherwise the command will be read from the resume file of the dependency.
+    """
 
     # Replace the placeholders in the preamble with the actual values from `fillers`
     # Placeholders are formatted as <key> in the preamble
@@ -16,11 +25,9 @@ def build_sbatch_file(preamble: str, fillers: dict, dependency: str = None, comm
     
     if command:
         preamble += f"\n\n{command}"
-    elif dependency:
-        preamble += f"\n\n" + "sleep 10"
+    elif dependency: # use command read from resume file of the dependency
+        preamble += f"\n" + "sleep 10" # Wait a bit to make sure the resume file is created
         preamble += f"\n" + "resume_command=`cat " + dependency + ".resume`"
-
-        # Execute the command:
         preamble += f"\n" + "eval $resume_command"
     else:
         raise ValueError("Must specify either a dependency or a command for the sbatch file.")
@@ -29,6 +36,12 @@ def build_sbatch_file(preamble: str, fillers: dict, dependency: str = None, comm
     
 
 def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
+    """ Submits an sbatch file to the Slurm queue.
+
+    Args:
+        sbatch_file_path: The path to the sbatch file to submit.
+        dependency: The job ID of the job that this job depends.
+    """
 
     try:
         commands = ['sbatch']
@@ -41,13 +54,13 @@ def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
         # The job ID is included in the output like: "Submitted batch job 123456"
         output = result.stdout
 
-        # Extract the job ID from the output:
         if "Submitted" in output:
+            # Extract the job ID from the output:
             job_id = output.strip().split()[-1]
             print(f"Submitted job {job_id}" + (f" with dependency (chain-job) {dependency}" if dependency else ""))
             return job_id
         else:
-            print("Error: Could not find job ID in sbatch output.")
+            print("Error: Failed starting job.\nCould not find job ID in sbatch output.")
             return None
 
     except subprocess.CalledProcessError as e:
@@ -75,7 +88,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-o", "--overwrites",
         type=str,
-        help="Key value pairs to overwrite in the config file (format: key1=value1,key2=value2).",
+        help="Key value pairs to overwrite default values specified in the config file (format: key1=value1,key2=value2).",
     )
 
     parser.add_argument(
