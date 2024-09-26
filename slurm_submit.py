@@ -99,6 +99,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # Clean up all current resume files
+    for file in os.listdir():
+        if file.endswith(".resume"):
+            os.remove(file)
+
     dir_path = os.path.dirname(os.path.realpath(__file__)) 
     config_file_path = os.path.join(dir_path, "configs", args.config + ".yaml")
     config_file = open(config_file_path, "r")
