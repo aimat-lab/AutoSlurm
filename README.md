@@ -22,4 +22,21 @@ function slurm_submit() {
 
 ## Starting a simple non-chained job
 
-TODO
+```
+usage: slurm_submit.py [-h] [-r RESUMES] [-o OVERWRITES] [-d] config command
+
+positional arguments:
+  config                Name of the config file in the configs directory (without the .yaml extension).
+  command               Command to run in the sbatch file. Should be put in quotes.
+
+options:
+  -h, --help            show this help message and exit
+
+  -r RESUMES, --resumes RESUMES
+                        Number of times to resume the job (default 0).
+
+  -o OVERWRITES, --overwrites OVERWRITES
+                        Key value pairs to overwrite default values specified in the config file (format: key1=value1,key2=value2).
+
+  -d, --dry             Dry run, do not submit sbatch files.
+```
