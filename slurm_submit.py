@@ -91,6 +91,8 @@ if __name__ == "__main__":
         help="Key value pairs to overwrite default values specified in the config file (format: key1=value1,key2=value2).",
     )
 
+    parser.add_argument("-d", "--dry", action='store_true', help="Dry run, do not submit sbatch files.")
+
     parser.add_argument(
         "command",
         type=str,
@@ -126,4 +128,5 @@ if __name__ == "__main__":
         with open(sbatch_file_path, "w") as f:
             f.write(build_sbatch_file(preamble=config["preamble"], fillers=defaults, dependency=slurm_id if i > 0 else None, command=args.command if i == 0 else None))
 
-        slurm_id = launch_sbatch_file(sbatch_file_path, dependency=slurm_id if i > 0 else None)
+        if not args.dry:
+            slurm_id = launch_sbatch_file(sbatch_file_path, dependency=slurm_id if i > 0 else None)
