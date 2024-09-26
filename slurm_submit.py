@@ -46,7 +46,8 @@ def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
     try:
         commands = ['sbatch']
         if dependency:
-            commands += ["--dependency=afterany:" + dependency]
+            #commands += ["--dependency=afterany:" + dependency]
+            commands += ["--dependency=aftercorr:" + dependency]
         commands += [sbatch_file_path]
 
         result = subprocess.run(commands, capture_output=True, text=True, check=True)
