@@ -96,11 +96,14 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "command",
+        nargs="*",
         type=str,
         help="Command to run in the sbatch file. Should be put in quotes."
     )
 
     args = parser.parse_args()
+
+    full_command = " ".join(args.command)
 
     dir_path = os.path.dirname(os.path.realpath(__file__)) 
     config_file_path = os.path.join(dir_path, "configs", args.config + ".yaml")
@@ -122,7 +125,7 @@ if __name__ == "__main__":
         sbatch_file_path = f"{scripts_dir}/submit_{i}.sbatch"
 
         with open(sbatch_file_path, "w") as f:
-            f.write(build_sbatch_file(preamble=config["preamble"], fillers=defaults, dependency=slurm_id if i > 0 else None, command=args.command if i == 0 else None))
+            f.write(build_sbatch_file(preamble=config["preamble"], fillers=defaults, dependency=slurm_id if i > 0 else None, command=full_command if i == 0 else None))
 
         if not args.dry:
             slurm_id = launch_sbatch_file(sbatch_file_path, dependency=slurm_id if i > 0 else None)
