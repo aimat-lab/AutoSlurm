@@ -1,6 +1,7 @@
 import argparse
 import yaml
 import os
+import sys
 import datetime
 import subprocess
 
@@ -69,6 +70,23 @@ def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
         return None
 
 if __name__ == "__main__":
+
+    command_index = None
+    for i in range(1, len(sys.argv)):
+        if sys.argv[i].strip() == "cmd":
+            # Everything after the 'cmd' is the command to run
+            command_index = i
+
+    if command_index is None:
+        print("Error: No command specified (should be after 'cmd').")
+        sys.exit(1)
+
+    # Get the command to run
+    full_command = " ".join(sys.argv[command_index + 1:])
+
+    # Remove the command from the arguments
+    sys.argv = sys.argv[:command_index]
+
     parser = argparse.ArgumentParser(
         description="Slurm submit helper."
     )
@@ -94,16 +112,7 @@ if __name__ == "__main__":
 
     parser.add_argument("-d", "--dry", action='store_true', help="Dry run, do not submit sbatch files.")
 
-    parser.add_argument(
-        "command",
-        nargs="*",
-        type=str,
-        help="Command to run in the sbatch file. Should be put in quotes."
-    )
-
     args = parser.parse_args()
-
-    full_command = " ".join(args.command)
 
     dir_path = os.path.dirname(os.path.realpath(__file__)) 
     config_file_path = os.path.join(dir_path, "configs", args.config + ".yaml")
