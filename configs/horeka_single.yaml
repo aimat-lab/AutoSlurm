@@ -2,15 +2,15 @@ preamble: |
   #!/bin/bash
   #SBATCH --ntasks=1
   #SBATCH --cpus-per-task=19
-  #SBATCH --gres=gpu:full:1
+  #SBATCH --gres=gpu:1
   #SBATCH --mem=125000mb
   #SBATCH --job-name=<job_name>
-  #SBATCH --time=24:00:00
-  #SBATCH --partition=advanced
+  #SBATCH --time=2-00:00:00
+  #SBATCH --partition=accelerated
   source /home/iti/${USER}/.bashrc
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/miniforge3/lib
   conda activate <env>
 
 defaults:
-  job_name: "haicore"
+  job_name: "horeka"
   env: "annealed_bg"
