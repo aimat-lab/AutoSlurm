@@ -7,8 +7,8 @@ preamble: |
   #SBATCH --job-name=<job_name>
   #SBATCH --time=2-00:00:00
   #SBATCH --partition=accelerated
-  source /home/iti/${USER}/.bashrc
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/miniforge3/lib
+  source ${HOME}/.bashrc
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOME}/miniforge3/lib
   conda activate <env>
 
 defaults:
