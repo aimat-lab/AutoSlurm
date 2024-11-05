@@ -73,23 +73,23 @@ def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
 
         return None
 
-if __name__ == "__main__":
-
+def main():
     command_index = None
     for i in range(1, len(sys.argv)):
         if sys.argv[i].strip() == "cmd":
             # Everything after the 'cmd' is the command to run
             command_index = i
 
-    if command_index is None:
-        print("Error: No command specified (should be after 'cmd').")
-        sys.exit(1)
+    if not (sys.argv[1] == "-h" or sys.argv[1] == "--help"):
+        if command_index is None:
+            print("Error: No command specified (should be after 'cmd').")
+            sys.exit(1)
 
-    # Get the command to run
-    full_command = " ".join(sys.argv[command_index + 1:])
+        # Get the command to run
+        full_command = " ".join(sys.argv[command_index + 1:])
 
-    # Remove the command from the arguments
-    sys.argv = sys.argv[:command_index]
+        # Remove the command from the arguments
+        sys.argv = sys.argv[:command_index]
 
     parser = argparse.ArgumentParser(
         description="Slurm submit helper."

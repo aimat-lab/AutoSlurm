@@ -1,2 +1,5 @@
 submit_scripts/
+slurm_submit/submit_scripts/
 .vscode/
+__pycache__
+slurm_submit.egg-info

@@ -1,42 +1,37 @@
 # Slurm submission helper
 
-This submission helper allows you to automatically generate slurm submission scripts and start them for you.
-Supports simple jobs, splitting multiple scripts accross the GPUs of a node, and even chain jobs - all
-with a single command.
+This submission helper allows you to automatically generate slurm submission scripts and starts them for you, based
+on reusable templates. Next to normal jobs, also the automatic creation of chain jobs is supported.
 
-At the moment, only single-node jobs that use all the GPUs of that node are supported.
-Chain jobs of that type of job are also supported, which at the moment is the main use of this tool.
-
-## Dependencies
-The only dependency is `pyyaml`, so likely most existing environments can be used.
+While some basic templates for sbatch scripts are available (see `configs` directory), you probably want to modify them
+slightly or create your own templates.
 
 ## Setup
 
-The easiest way to be able to run the command `slurm_submit` from anywhere is to add the following lines to your `~/.bashrc` file:
+Simply clone the repository and install as a package:
 
 ```
-function slurm_submit() {
-    python /path/to/repository/slurm_submit.py "$@"
-}
+pip install -e .
 ```
+
+Then, the command "slurm_submit" will be available to start jobs.
+
 
 ## Starting a simple non-chained job
 
 ```
-usage: slurm_submit.py [-h] [-r RESUMES] [-o OVERWRITES] [-d] config command
+usage: slurm_submit [-h] [-r RESUMES] [-o OVERWRITES] [-d] config cmd [Your command]
+
+Slurm submit helper.
 
 positional arguments:
   config                Name of the config file in the configs directory (without the .yaml extension).
-  command               Command to run in the sbatch file. Should be put in quotes.
 
 options:
   -h, --help            show this help message and exit
-
   -r RESUMES, --resumes RESUMES
                         Number of times to resume the job (default 0).
-
   -o OVERWRITES, --overwrites OVERWRITES
                         Key value pairs to overwrite default values specified in the config file (format: key1=value1,key2=value2).
-
   -d, --dry             Dry run, do not submit sbatch files.
 ```
