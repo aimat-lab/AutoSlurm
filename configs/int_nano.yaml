@@ -1,11 +1,11 @@
 preamble: |
   #!/bin/bash
   #SBATCH --ntasks=1
-  #SBATCH --cpus-per-task=16
+  #SBATCH --cpus-per-task=<cpus>
   #SBATCH --gres=gpu:1
-  #SBATCH --mem=64000mb
+  #SBATCH --mem=<mem>
   #SBATCH --job-name=<job_name>
-  #SBATCH --time=50-24:00:00
+  #SBATCH --time=<time>
   #SBATCH --partition=gpu
   source ${HOME}/.bashrc
   export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
@@ -14,3 +14,6 @@ preamble: |
 defaults:
   job_name: "nano"
   env: "annealed_bg"
+  cpus: "16"
+  mem: "64000mb"
+  time: "50-24:00:00"

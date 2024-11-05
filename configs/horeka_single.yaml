@@ -1,16 +1,19 @@
 preamble: |
   #!/bin/bash
   #SBATCH --ntasks=1
-  #SBATCH --cpus-per-task=19
+  #SBATCH --cpus-per-task=<cpus>
   #SBATCH --gres=gpu:1
-  #SBATCH --mem=125000mb
+  #SBATCH --mem=<mem>
   #SBATCH --job-name=<job_name>
-  #SBATCH --time=2-00:00:00
+  #SBATCH --time=<time>
   #SBATCH --partition=accelerated
   source ${HOME}/.bashrc
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOME}/miniforge3/lib
+  export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
   conda activate <env>
 
 defaults:
   job_name: "horeka"
   env: "annealed_bg"
+  cpus: "19"
+  mem: "125000mb"
+  time: "2-00:00:00"
