@@ -63,11 +63,11 @@ def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
             print(f"Submitted job {job_id}" + (f" with dependency (chain-job) {dependency}" if dependency else ""))
             return job_id
         else:
-            print("Error: Failed starting job.\nCould not find job ID in sbatch output.")
+            print("Error: Failed starting job. Could not find job ID in sbatch output.")
             return None
 
     except CalledProcessError as e:
-        print(f"Error submitting sbatch job:")
+        print(f"Error: Failed starting job. 'sbatch' returned non-zero exit code:")
         print(e.stdout)
         print(e.stderr)
 
