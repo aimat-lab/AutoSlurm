@@ -1,0 +1,16 @@
+preamble: |
+  #!/bin/bash
+  #SBATCH --ntasks=1
+  #SBATCH --cpus-per-task=16
+  #SBATCH --gres=gpu:1
+  #SBATCH --mem=64000mb
+  #SBATCH --job-name=<job_name>
+  #SBATCH --time=50-24:00:00
+  #SBATCH --partition=gpu
+  source ${HOME}/.bashrc
+  export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+  conda activate <env>
+
+defaults:
+  job_name: "nano"
+  env: "annealed_bg"
