@@ -4,6 +4,7 @@ import os
 import sys
 import datetime
 import subprocess
+from subprocess import CalledProcessError
 
 def build_sbatch_file(preamble: str, fillers: dict, dependency: str = None, command: str= None):
     """ Builds an sbatch file.
@@ -65,8 +66,11 @@ def launch_sbatch_file(sbatch_file_path: str, dependency: str = None):
             print("Error: Failed starting job.\nCould not find job ID in sbatch output.")
             return None
 
-    except subprocess.CalledProcessError as e:
-        print(f"Error submitting sbatch job: {e}")
+    except CalledProcessError as e:
+        print(f"Error submitting sbatch job:")
+        print(e.stdout)
+        print(e.stderr)
+
         return None
 
 if __name__ == "__main__":
