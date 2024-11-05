@@ -114,7 +114,7 @@ def main():
         help="Key value pairs to overwrite default values specified in the config file (format: key1=value1,key2=value2).",
     )
 
-    parser.add_argument("-d", "--dry", action='store_true', help="Dry run, do not submit sbatch files.")
+    parser.add_argument("-d", "--dry", action='store_true', help="Dry run, do not submit sbatch files, just create them.")
 
     args = parser.parse_args()
 
