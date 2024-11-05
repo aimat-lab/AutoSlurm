@@ -142,3 +142,7 @@ if __name__ == "__main__":
 
         if not args.dry:
             slurm_id = launch_sbatch_file(sbatch_file_path, dependency=slurm_id if i > 0 else None)
+
+            if slurm_id is None and i != args.resumes: # If failed and not the last resume job
+                print("Stopping the submission of subsequent resume jobs due to an error.")
+                break
