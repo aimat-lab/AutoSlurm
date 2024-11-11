@@ -16,4 +16,4 @@ defaults:
   env: "annealed_bg"
   cpus: "19"
   mem: "125000mb"
-  time: "2-00:00:00"
+  time: "24:00:00"
