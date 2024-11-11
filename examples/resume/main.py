@@ -38,15 +38,21 @@ if __name__ == "__main__":
         checkpoint_dir = args.checkpoint_dir
     else:
         # Generate checkpoint dir for this job using date and time as name
-        checkpoint_dir = f"checkpoints/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+        checkpoint_dir = (
+            f"checkpoints/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+        )
     os.makedirs(checkpoint_dir, exist_ok=True)
 
-    if args.start_iter + args.iters_per_job < args.max_iter: # If this job is not the last one!
+    if (
+        args.start_iter + args.iters_per_job < args.max_iter
+    ):  # If this job is not the last one!
         # Write to file how to resume this script in the next job
         slurm_id = os.environ.get("SLURM_JOB_ID", None)
 
         with open(f"{slurm_id}.resume", "w") as f:
-            f.write(f"python main.py --start_iter {args.start_iter + args.iters_per_job} --max_iter {args.max_iter} --iters_per_job {args.iters_per_job} --checkpoint_dir {checkpoint_dir}")
+            f.write(
+                f"python main.py --start_iter {args.start_iter + args.iters_per_job} --max_iter {args.max_iter} --iters_per_job {args.iters_per_job} --checkpoint_dir {checkpoint_dir}"
+            )
 
     ##### ... Do work ... #####
 
