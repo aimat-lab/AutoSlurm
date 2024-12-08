@@ -154,6 +154,7 @@ def main():
         f"submit_scripts/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
     )
     os.makedirs(scripts_dir, exist_ok=True)
+    print("Slurm sbatch files will be written to:", scripts_dir)
 
     for i in range(0, args.resumes + 1):
         sbatch_file_path = f"{scripts_dir}/submit_{i}.sbatch"
@@ -180,3 +181,8 @@ def main():
                     "Stopping the submission of subsequent resume jobs due to an error."
                 )
                 break
+        else:
+            slurm_id = str(i)
+            print(
+                "Warning: Using dry run with resume jobs. Slurm ID is set to", slurm_id
+            )
