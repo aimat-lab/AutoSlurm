@@ -7,6 +7,8 @@ preamble: |
   #SBATCH --job-name=<job_name>
   #SBATCH --time=<time>
   #SBATCH --partition=accelerated
+  <additional_sbatch_configs>
+
   source ${HOME}/.bashrc
   export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
   conda activate <env>
@@ -17,3 +19,4 @@ defaults:
   cpus: "19"
   mem: "125000mb"
   time: "48:00:00"
+  additional_sbatch_configs: ""
