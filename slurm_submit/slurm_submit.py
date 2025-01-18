@@ -220,6 +220,8 @@ def main():
             key, value = overwrite.split("=")
             defaults[key] = value
 
+    defaults["starting_dir"] = os.getcwd()
+
     # Create directory for sbatch files
     scripts_dir = (
         f"submit_scripts/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
