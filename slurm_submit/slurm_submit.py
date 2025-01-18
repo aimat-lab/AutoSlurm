@@ -157,7 +157,7 @@ def main():
                     sys.argv[command_index + 1 : command_start_indices[i + 1]]
                 )
 
-            commands.append([command] * command_repetitions[i])
+            commands.extend([command] * command_repetitions[i])
 
         # Remove the commands from sys.argv
         sys.argv = sys.argv[: command_start_indices[0]]
@@ -258,6 +258,13 @@ def main():
                 break
         else:
             slurm_id = str(i)
-            print(
-                "Warning: Using dry run with resume jobs. Slurm ID is set to", slurm_id
-            )
+
+            if i != args.resumes:
+                print(
+                    "Warning: Using dry run with resume jobs. Slurm ID is set to",
+                    slurm_id,
+                )
+
+
+if __name__ == "__main__":
+    main()
