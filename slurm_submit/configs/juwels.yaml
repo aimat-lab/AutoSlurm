@@ -1,0 +1,24 @@
+preamble: |
+  #!/bin/bash
+  #SBATCH --account=hai_al_cg
+  #SBATCH --nodes=1
+  #SBATCH --ntasks=1
+  #SBATCH --cpus-per-task=<cpus>
+  #SBATCH --time=<time>
+  #SBATCH --gres=gpu:4
+  #SBATCH --mem=<mem>
+  #SBATCH --job-name=<job_name>
+  #SBATCH --partition=booster
+  <additional_sbatch_configs>
+
+  source ${HOME}/.bashrc
+  export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+  conda activate <env>
+
+defaults:
+  job_name: "juwels"
+  env: "annealed_bg"
+  cpus: "48"
+  mem: "512000mb"
+  time: "24:00:00"
+  additional_sbatch_configs: ""
