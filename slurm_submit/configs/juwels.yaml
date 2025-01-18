@@ -11,11 +11,11 @@ preamble: |
   #SBATCH --partition=booster
   <additional_sbatch_configs>
 
-  cd <starting_dir>
-
   source ${HOME}/.bashrc
   export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
   conda activate <env>
+
+  cd <starting_dir>
 
 defaults:
   job_name: "juwels"
