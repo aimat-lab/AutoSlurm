@@ -1,0 +1,22 @@
+preamble: |
+  #!/bin/bash
+  #SBATCH --ntasks=1
+  #SBATCH --cpus-per-task=<cpus>
+  #SBATCH --gres=gpu:full:4
+  #SBATCH --mem=<mem>
+  #SBATCH --job-name=<job_name>
+  #SBATCH --time=<time>
+  #SBATCH --partition=advanced
+  <additional_sbatch_configs>
+
+  source ${HOME}/.bashrc
+  export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+  conda activate <env>
+
+defaults:
+  job_name: "haicore"
+  env: "annealed_bg"
+  cpus: "152"
+  mem: "500000mb"
+  time: "72:00:00"
+  additional_sbatch_configs: ""
