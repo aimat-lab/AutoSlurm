@@ -1,5 +1,5 @@
 submit_scripts/
-slurm_submit/submit_scripts/
+auto_slurm/submit_scripts/
 .vscode/
 __pycache__
-slurm_submit.egg-info
+auto_slurm.egg-info

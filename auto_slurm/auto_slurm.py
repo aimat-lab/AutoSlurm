@@ -162,7 +162,7 @@ def main():
         # Remove the commands from sys.argv
         sys.argv = sys.argv[: command_start_indices[0]]
 
-    parser = argparse.ArgumentParser(description="Slurm submit helper.")
+    parser = argparse.ArgumentParser(description="Slurm submission helper that writes sbatch scripts based on templates and starts them for you.")
 
     parser.add_argument(
         "config",
