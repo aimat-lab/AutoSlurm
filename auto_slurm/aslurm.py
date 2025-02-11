@@ -102,7 +102,7 @@ def create_slurm_job_files(
         f"\n\n{build_commands_str(commands, job_start_task_index, gpus_per_task)}"
     )
     main_slurm_script += f"\n\nwait"  # Wait for all tasks to finish
-    main_slurm_script += "sleep 10"  # Just to be safe
+    main_slurm_script += "\nsleep 10"  # Just to be safe
 
     ##### Build the resume slurm script #####
 
@@ -111,7 +111,7 @@ def create_slurm_job_files(
         for i in range(len(commands))
     ]
     resume_slurm_script += f"\n\n{build_commands_str(resume_commands, job_start_task_index, gpus_per_task)}"
-    resume_slurm_script += "sleep 10"  # Just to be safe
+    resume_slurm_script += "\nsleep 10"  # Just to be safe
 
     ##### Run resume job if needed #####
 
