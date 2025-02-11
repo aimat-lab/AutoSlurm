@@ -144,7 +144,7 @@ number of tasks per job is thus calculated by dividing by `gpus_per_task`.
 (see 🚀 **Tip** above). Instead, you should directly specify `max_tasks`.
 
 If you supply more commands to `aslurm` than the maximum number of tasks per
-job, the commands will be automatically split accross multiple jobs. This is
+job, the commands will be automatically split across multiple jobs. This is
 especially useful when using the sweep shorthand notation (see below) to quickly
 launch a large number of jobs.
 
@@ -177,7 +177,7 @@ There are two ways to specify sweeps:
           lists, yielding all possible combinations (16).
         - Since the `horeka_4gpu` configuration allows a maximum of 4 tasks per
           job (when using 1 GPU per task), the 16 tasks will be automatically
-          split accross 4 jobs.
+          split across 4 jobs.
 
 The second example is illustrated here:
 
