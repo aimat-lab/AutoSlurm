@@ -186,9 +186,9 @@ The second example is illustrated here:
 
 ## Chain jobs
 
-Many HPC clusters have time limits for slurm jobs. Therefore, `AutoSlurm`
-supports the automatic creation of infinite chain jobs, where each subsequent
-job picks up the work of the previous one.
+Many HPC clusters have time limits for slurm jobs. To run tasks that take longer
+than the time limit, `AutoSlurm` supports the automatic creation of infinite
+chain jobs, where each subsequent job picks up the work of the previous one.
 
 This works in the following way: If a task runs out of time (because it is close
 to the time limit of the job), it writes a checkpoint from where the work can be
