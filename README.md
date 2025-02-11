@@ -124,9 +124,10 @@ can also use the cmdxi shorthand notation:
 aslurm -cn horeka_4gpu cmdx4 python train.py
 ```
 
-cmdxi will simply repeat the command `i` times, yielding 4 tasks. This can be
-helpful when generating the final results of a research paper, where the
-experiments need to be repeated multiple times to test reproducibility.
+cmdxi will simply repeat the command `i` times, yielding 4 tasks in the example
+above. This can be helpful when generating the final results of a research
+paper, where the experiments need to be repeated multiple times to test
+reproducibility.
 
 🚀 **Tip:** By default, each task uses a single GPU. You can overwrite this behavior using `-o gpus_per_task=2`. In this case, each task will be assigned two GPUs.
 
