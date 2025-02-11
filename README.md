@@ -144,9 +144,9 @@ number of tasks per job is thus calculated by dividing by `gpus_per_task`.
 (see 🚀 **Tip** above). Instead, you should directly specify `max_tasks`.
 
 If you supply more commands to `aslurm` than the maximum number of tasks per
-job, the commands will be automatically split accross multiple jobs / nodes.
-This is especially useful when using the sweep shorthand notation (see below for
-an example) to quickly launch a large number of jobs.
+job, the commands will be automatically split accross multiple jobs. This is
+especially useful when using the sweep shorthand notation (see below for an
+example) to quickly launch a large number of jobs.
 
 ### Sweeps
 
