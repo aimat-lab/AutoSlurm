@@ -238,7 +238,7 @@ Here is an example of a single-task chain job, where the task is resumed two tim
 <img src="./images/single_chain_job.png" width="100%">
 <br><br>
 
-Chain jobs of course also work with multi-task jobs:
+Of course, chain jobs also work with multi-task jobs:
 
 <img src="./images/multi_chain_job.png" width="100%">
 <br><br>
