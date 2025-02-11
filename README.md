@@ -103,8 +103,9 @@ to select your most common configuration for each cluster.
 <img src="./images/multi_job.png" width="100%">
 <br><br>
 
-Let's say you want to execute four independent scripts on a single node on `HoreKa`.
-This can be accomplished by supplying multiple commands:
+Let's say you want to execute four independent scripts, each with their own
+configuration, on a single node on `HoreKa`. This can be accomplished by
+supplying multiple commands:
 
 ```bash
 aslurm -cn horeka_4gpu                     \
