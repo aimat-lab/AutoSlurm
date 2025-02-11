@@ -145,8 +145,8 @@ number of tasks per job is thus calculated by dividing by `gpus_per_task`.
 
 If you supply more commands to `aslurm` than the maximum number of tasks per
 job, the commands will be automatically split accross multiple jobs. This is
-especially useful when using the sweep shorthand notation (see below for an
-example) to quickly launch a large number of jobs.
+especially useful when using the sweep shorthand notation (see below) to quickly
+launch a large number of jobs.
 
 ### Sweeps
 
