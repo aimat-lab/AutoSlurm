@@ -37,7 +37,8 @@ if __name__ == "__main__":
         time.sleep(1)  # Do work ...
 
         if timer.time_limit_reached() and i < max_iter - 1:
-            # Time limit reached and still work to do => Write checkpoint + resume file to pick up the work
+            # Time limit reached and still work to do
+            # => Write checkpoint + resume file to pick up the work:
 
             # ... Checkpoint saving goes here ...
 
@@ -47,3 +48,5 @@ if __name__ == "__main__":
             )
 
             # After writing this resume file, auto_slurm will automatically schedule a new job that resumes the work using the command in the resume file.
+
+            break
