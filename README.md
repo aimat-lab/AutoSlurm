@@ -4,10 +4,12 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Version](https://img.shields.io/badge/Version-0.1.0-green)
 
-`AutoSlurm` automatically generates slurm job scripts based on reusable templates and starts them for you.
-This includes support for multi-task multi-GPU jobs, automatic creation of infinite chain jobs, and support for hyperparameter sweeps.
-A large number of ready-to-use templates for all major HPC clusters at KIT and beyond exist, such that you can immediately start
-throwing compute at your problems without writing boring job scripts yourself.
+`AutoSlurm` automatically generates slurm job scripts based on reusable
+templates and starts them for you. This includes support for multi-task
+multi-GPU jobs, automatic creation of infinite chain jobs, and hyperparameter
+sweeps. A large number of ready-to-use templates for all major HPC clusters at
+KIT and beyond exist, such that you can immediately start throwing compute at
+your problems without writing boring job scripts yourself.
 
 ## Setup
 
