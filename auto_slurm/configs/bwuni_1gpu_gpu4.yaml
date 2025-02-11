@@ -1,0 +1,13 @@
+defaults:
+  - main
+
+default_fillers:
+  partition: "gpu_4"
+  job_name: "bwuni"
+  time: "48:00:00"
+  cpus: "20"
+  mem: "94000mb"
+  gres: "gpu:1"
+
+NO_gpus: 1
+max_tasks: null

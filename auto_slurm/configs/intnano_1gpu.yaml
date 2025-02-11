@@ -1,0 +1,13 @@
+defaults:
+  - main
+
+default_fillers:
+  partition: "gpu"
+  job_name: "intnano"
+  time: "50-24:00:00"
+  cpus: "16"
+  mem: "64000mb"
+  gres: "gpu:1"
+
+NO_gpus: 1
+max_tasks: null

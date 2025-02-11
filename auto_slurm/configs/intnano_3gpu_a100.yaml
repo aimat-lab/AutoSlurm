@@ -1,0 +1,13 @@
+defaults:
+  - main
+
+default_fillers:
+  partition: "aimat"
+  job_name: "intnano"
+  time: "50-24:00:00"
+  cpus: "384"
+  mem: "1490000mb"
+  gres: "gpu:3"
+
+NO_gpus: 3
+max_tasks: null

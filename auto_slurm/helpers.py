@@ -1,6 +1,7 @@
 import time
 import os
 
+
 class RunTimer:
     def __init__(self, time_limit: int = 48):
         """Initialize the timer with a time limit in hours.
@@ -25,6 +26,7 @@ class RunTimer:
 
         return (time.time() - self._start_time) > self._time_limit * 3600
 
+
 def start_run(time_limit: int = 48):
     """Start the timer of a new run.
 
@@ -37,6 +39,7 @@ def start_run(time_limit: int = 48):
 
     run_timer = RunTimer(time_limit)
     return run_timer
+
 
 def write_resume_file(command: str):
     """Write the command with which this process can be resumed to a file.
@@ -52,12 +55,12 @@ def write_resume_file(command: str):
 
     if slurm_id is not None:
         with open(
-            f"{slurm_id}"
-            + (f"_{task_index}")
-            + ".resume",
+            f"{slurm_id}" + (f"_{task_index}") + ".resume",
             "w",
         ) as f:
             f.write(command)
 
     else:
-        raise RuntimeError("SLURM_JOB_ID not set, probably not running in a slurm environment.")
+        raise RuntimeError(
+            "SLURM_JOB_ID not set, probably not running in a slurm environment."
+        )

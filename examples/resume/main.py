@@ -1,63 +1,49 @@
 import argparse
-import datetime
-import os
+import time
+from auto_slurm.helpers import start_run
+from auto_slurm.helpers import write_resume_file
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(
-        description="Example of a script that can be resumed for chained jobs."
+    parser = argparse.ArgumentParser(description="Example script that can be resumed.")
+    parser.add_argument(
+        "--checkpoint_path",
+        type=str,
+        default=None,
     )
-
     parser.add_argument(
         "--start_iter",
         type=int,
         default=0,
     )
-    parser.add_argument(
-        "--max_iter",
-        type=int,
-        default=1000,
-    )
-    parser.add_argument(
-        "--iters_per_job",
-        type=int,
-        default=None,
-    )
-    parser.add_argument(
-        "--checkpoint_dir",
-        type=str,
-        default=None,
-    )
-
     args = parser.parse_args()
 
-    if args.iters_per_job is None:
-        args.iters_per_job = args.max_iter
+    if args.checkpoint_path is not None:
 
-    if args.checkpoint_dir is not None:
-        checkpoint_dir = args.checkpoint_dir
-    else:
-        # Generate checkpoint dir for this job using date and time as name
-        checkpoint_dir = (
-            f"checkpoints/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
-        )
-    os.makedirs(checkpoint_dir, exist_ok=True)
+        # ... Checkpoint loading goes here ...
 
-    if (
-        args.start_iter + args.iters_per_job < args.max_iter
-    ):  # If this job is not the last one!
-        # Write to file how to resume this script in the next job
-        slurm_id = os.environ.get("SLURM_JOB_ID", None)
+        pass
 
-        with open(f"{slurm_id}.resume", "w") as f:
-            f.write(
-                f"python main.py --start_iter {args.start_iter + args.iters_per_job} --max_iter {args.max_iter} --iters_per_job {args.iters_per_job} --checkpoint_dir {checkpoint_dir}"
+    start_iter = args.start_iter
+
+    timer = start_run(
+        time_limit=10 / 3600
+    )  # 10s timelimit here, in practice of course longer
+
+    # Training loop:
+    max_iter = 100
+    for i in range(start_iter, max_iter):
+        print(f"Training iteration {i}")
+        time.sleep(1)  # Do work ...
+
+        if timer.time_limit_reached() and i < max_iter - 1:
+            # Time limit reached and still work to do => Write checkpoint + resume file to pick up the work
+
+            # ... Checkpoint saving goes here ...
+
+            write_resume_file(
+                "python main.py --checkpoint_path my_checkpoint.pt --start_iter "
+                + str(i + 1)
             )
 
-    ##### ... Do work ... #####
-
-    print("Running job with the following parameters:")
-    print(f"start_iter: {args.start_iter}")
-    print(f"max_iter: {args.max_iter}")
-    print(f"iters_per_job: {args.iters_per_job}")
-    print(f"checkpoint_dir: {checkpoint_dir}")
+            # After writing this resume file, auto_slurm will automatically schedule a new job that resumes the work using the command in the resume file.

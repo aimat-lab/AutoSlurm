@@ -1,0 +1,25 @@
+template: |
+  #!/bin/bash
+  #SBATCH --ntasks=1
+  #SBATCH --cpus-per-task=<cpus>
+  #SBATCH --gres=<gres>
+  #SBATCH --mem=<mem>
+  #SBATCH --job-name=<job_name>
+  #SBATCH --time=<time>
+  #SBATCH --partition=<partition>
+  #SBATCH --output=/dev/null
+  #SBATCH --error=/dev/null
+  <additional_sbatch_configs>
+
+  source ${HOME}/.bashrc
+  export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+  conda activate <env>
+
+default_fillers:
+  additional_sbatch_configs: ""
+
+# Exactly one of the following two options needs to be specified (the other should be set to null):
+NO_gpus: ??? # (for GPU-nodes)
+max_tasks: ??? # (for non-GPU-nodes)
+
+gpus_per_task: 1 # Should be specified for GPU-jobs (=> if NO_gpus is also specified)

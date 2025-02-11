@@ -1,0 +1,14 @@
+defaults:
+  - main
+
+default_fillers:
+  partition: "booster"
+  job_name: "juwels"
+  time: "24:00:00"
+  cpus: "48"
+  mem: "515000mb"
+  gres: "gpu:4"
+  additional_sbatch_configs: "#SBATCH --account=<juwels_project_name>" # juwels_project_name is defined in global_config.yaml
+
+NO_gpus: 4
+max_tasks: null

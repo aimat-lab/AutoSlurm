@@ -2,16 +2,19 @@
 requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["auto_slurm"]
+
 [project]
 name = "auto_slurm"
 version = "0.1.0"
-description = "Slurm submission helper that writes sbatch scripts based on templates and starts them for you."
+description = "Slurm submission helper that writes slurm job scripts based on templates and starts them for you."
 authors = [
     {name = "Henrik Schopmans", email = "h.schopmans@gmail.com"},
 ]
 readme = "README.md"
 requires-python = ">=3.7"
-dependencies = ["pyyaml"]
+dependencies = ["hydra-core"]
 
 [project.scripts]
-aslurm = "auto_slurm.auto_slurm:main"
+aslurm = "auto_slurm.aslurm:main"
