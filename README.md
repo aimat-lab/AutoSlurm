@@ -1,7 +1,11 @@
 # AutoSlurm
 
-This tool automatically generates slurm submission scripts based on reusable templates and starts them for you.
-This includes support for multi-task multi-GPU jobs, automatic creation of infinite chain jobs, and easy support for hyperparameter sweeps.
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Version](https://img.shields.io/badge/Version-0.1.0-green)
+
+`AutoSlurm` automatically generates slurm job scripts based on reusable templates and starts them for you.
+This includes support for multi-task multi-GPU jobs, automatic creation of infinite chain jobs, and support for hyperparameter sweeps.
 A large number of ready-to-use templates for all major HPC clusters at KIT and beyond exist, such that you can immediately start
 throwing compute at your problems without writing boring job scripts yourself.
 
@@ -15,12 +19,12 @@ pip install git+https://github.com/aimat-lab/AutoSlurm.git
 
 The command `aslurm` will then be available to start jobs.
 
-## sbatch templates
+## Job templates
 
-AutoSlurm works by filling predefined bash script templates. All templates can
-be found in `./configs/`. The currently available default templates are
-summarized in the following table. Templates for other node types and new HPC
-clusters can easily be added by simply adapting one of the existing templates.
+`AutoSlurm` works by filling predefined bash script templates. All templates can
+be found in `./auto_slurm/configs/`. The default templates are summarized in the
+table below. Templates for other node types and new HPC clusters can easily be
+added by simply adapting one of the existing templates.
 
 | Cluster  	| Config name          	| Slurm partition   	| GPUs                   	| Threads (with hyperthreading) 	| Memory     	| Time limit 	|
 |----------	|----------------------	|-------------------	|------------------------	|-------------------------------	|------------	|------------	|
@@ -29,8 +33,8 @@ clusters can easily be added by simply adapting one of the existing templates.
 | HAICORE  	| haicore_halfgpu      	| normal (advanced) 	| 0.5 x A100 (40GB)      	| 19                            	| 62700 MB   	| 72h        	|
 | HoreKa   	| horeka_4gpu          	| accelerated       	| 4 x A100 (40GB)        	| 152                           	| 501600 MB  	| 48h        	|
 | HoreKa   	| horeka_1gpu          	| accelerated       	| 1 x A100 (40GB)        	| 38                            	| 125400 MB  	| 48h        	|
-| HoreKa   	| horeka_4gpu_h100     	| accelerated-h100  	| 4 x A100 (40GB)        	| 128                           	| 772000 MB  	| 48h        	|
-| HoreKa   	| horeka_1gpu_h100     	| accelerated-h100  	| 1 x A100 (40GB)        	| 32                            	| 193000 MB  	| 48h        	|
+| HoreKa   	| horeka_4gpu_h100     	| accelerated-h100  	| 4 x H100 (80GB)        	| 128                           	| 772000 MB  	| 48h        	|
+| HoreKa   	| horeka_1gpu_h100     	| accelerated-h100  	| 1 x H100 (80GB)        	| 32                            	| 193000 MB  	| 48h        	|
 | JUWELS   	| juwels_4gpu          	| booster           	| 4 x A100 (40GB)        	| 48 (Hyperthreading disabled)  	| 515000 MB  	| 24h        	|
 | bwUni    	| bwuni_4gpu_gpu4      	| gpu_4             	| 4 x V100 (32GB)        	| 80                            	| 376000 MB  	| 48h        	|
 | bwUni    	| bwuni_1gpu_gpu4      	| gpu_4             	| 1 x V100 (32GB)        	| 20                            	| 94000 MB   	| 48h        	|
@@ -45,17 +49,32 @@ clusters can easily be added by simply adapting one of the existing templates.
 | int-nano 	| intnano_3gpu_a100    	| aimat             	| 3 x A100 (80GB)        	| 384                           	| 1490000 MB 	| unlimited  	|
 | int-nano 	| intnano_1gpu_a100    	| aimat             	| 1 x A100 (80GB)        	| 128                           	| 496666 MB  	| unlimited  	|
 
-As one can see in this table, if less than all available GPUs of a node are used, the other ressources (CPUs and memory) are scaled down proportionally.
-This behavior can be overwritten using overwrites (see command option `-o` below).
+As one can see in this table, if less than all available GPUs of a node are
+used, the other ressources (CPUs and memory) are scaled down proportionally by
+default.
 
 ## Single-task jobs
 
 <img src="./images/single_job.png" width="80%">
 <br><br>
 
+You can execute a single task (script) in the following way:
+
+```
+aslurm -cn horeka_1gpu cmd python train.py
+```
+
+This will execute `python train.py` using a single GPU on `HAICORE`.
+
+Every template by default first loads a default conda environment. The default conda environment can be specified in `global_config.yaml`.
+
+<span style="color: red;">️🚀 Tip: When running `aslurm`, the slurm job files will be written to `./aslurm/` and then executed. If you only want to create the job files without executing them (for example, for testing), you can run `aslurm` with the `--dry` flag.</span>
+
+
 ### Overwrites
 
-TODO: Add example directly here
+
+### Automatic `hostname → config` mapping
 
 ## Multi-task jobs
 

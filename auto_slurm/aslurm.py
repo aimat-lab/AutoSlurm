@@ -10,13 +10,14 @@ from subprocess import CalledProcessError
 from typing import List
 import hydra
 import omegaconf
+from typing import Optional
 from itertools import product
 from auto_slurm.config import Config
 from auto_slurm.config import GeneralConfig
 
 
 def build_commands_str(
-    commands: List[str], job_start_task_index: int, gpus_per_task: int | None = None
+    commands: List[str], job_start_task_index: int, gpus_per_task: Optional[int] = None
 ) -> str:
     """
     Builds a string of multiple commands to run in a slurm job script.
@@ -72,7 +73,7 @@ def create_slurm_job_files(
     fillers: dict,
     global_fillers: dict,
     commands: List[str] = None,
-    gpus_per_task: int | None = None,
+    gpus_per_task: Optional[int] = None,
 ):
     """Builds the main and resume slurm job files and writes them to disk.
 

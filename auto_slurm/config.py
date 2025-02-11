@@ -3,6 +3,7 @@ from pydantic import BaseModel, ConfigDict
 from pydantic import PositiveInt
 from pydantic import model_validator
 from typing_extensions import Self
+from typing import Optional
 
 
 class GeneralConfig(BaseModel):
@@ -18,10 +19,10 @@ class Config(BaseModel):
     template: str
     default_fillers: Dict[str, str]
 
-    NO_gpus: PositiveInt | None
-    max_tasks: PositiveInt | None
+    NO_gpus: Optional[PositiveInt]
+    max_tasks: Optional[PositiveInt]
 
-    gpus_per_task: PositiveInt | None
+    gpus_per_task: Optional[PositiveInt]
 
     @model_validator(mode="after")
     def check(self) -> Self:
