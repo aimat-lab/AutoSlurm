@@ -230,15 +230,15 @@ You can find the full example in `./auto_slurm/examples/resume/main.py`.
 
 Whenever a resume file is found after all tasks of a job terminate, `AutoSlurm`
 will automatically schedule a resume job to pick up the work. You do not have to
-modify your `aslurm` command for chain-jobs, you simply have to write the resume
+modify your `aslurm` command for chain jobs, you simply have to write the resume
 file (see above).
 
-Here is an example of a single-task chain-job, where the task is resumed two times:
+Here is an example of a single-task chain job, where the task is resumed two times:
 
 <img src="./images/single_chain_job.png" width="100%">
 <br><br>
 
-Chain-jobs of course also work with multi-task jobs:
+Chain jobs of course also work with multi-task jobs:
 
 <img src="./images/multi_chain_job.png" width="100%">
 <br><br>
