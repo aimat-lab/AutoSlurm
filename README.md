@@ -174,10 +174,10 @@ There are two ways to specify sweeps:
         aslurm -cn horeka_4gpu cmd python train.py lr=<{1e-3,1e-4,1e-5,1e-6}> batch_size=<{1024,512,128}>
         ```
         - This will create tasks using the product space of the two specified
-          lists, yielding all possible combinations (16).
+          lists, yielding all possible combinations (12).
         - Since the `horeka_4gpu` configuration allows a maximum of 4 tasks per
-          job (when using 1 GPU per task), the 16 tasks will be automatically
-          split across 4 jobs.
+          job (when using 1 GPU per task), the 12 tasks will be automatically
+          split across 3 jobs.
 
 The second example is illustrated here:
 
