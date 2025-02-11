@@ -176,7 +176,8 @@ There are two ways to specify sweeps:
         - This will create tasks using the product space of the two specified
           lists, yielding all possible combinations (16).
         - Since the `horeka_4gpu` configuration allows a maximum of 4 tasks per
-          job, the 16 tasks will be automatically split accross 4 jobs.
+          job (when using 1 GPU per task), the 16 tasks will be automatically
+          split accross 4 jobs.
 
 The second example is illustrated here:
 
