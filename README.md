@@ -57,7 +57,7 @@ default.
 
 ## Single-task jobs
 
-<img src="./images/single_job.png" width="90%">
+<img src="./images/single_job.png" width="100%">
 <br><br>
 
 You can execute a single task (script) in the following way:
@@ -100,7 +100,7 @@ to select your most common configuration for each cluster.
 
 ## Multi-task jobs
 
-<img src="./images/multi_job.png" width="90%">
+<img src="./images/multi_job.png" width="100%">
 <br><br>
 
 Let's say you want to execute four independent scripts on a single node on `HoreKa`.
@@ -178,7 +178,7 @@ There are two ways to specify sweeps:
 
 The second example is illustrated here:
 
-<img src="./images/split_job.png" width="90%">
+<img src="./images/split_job.png" width="100%">
 <br><br>
 
 ## Chain jobs
@@ -232,12 +232,12 @@ file (see above).
 
 Here is an example of a single-task chain-job, where the task is resumed two times:
 
-<img src="./images/single_chain_job.png" width="90%">
+<img src="./images/single_chain_job.png" width="100%">
 <br><br>
 
 Chain-jobs of course also work with multi-task jobs:
 
-<img src="./images/multi_chain_job.png" width="90%">
+<img src="./images/multi_chain_job.png" width="100%">
 <br><br>
 
 In this case, `AutoSlurm` will keep spawning new chain jobs as long as at least
