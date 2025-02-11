@@ -163,10 +163,10 @@ There are two ways to specify sweeps:
         ```
         - This will run the following 4 tasks in parallel on a single HoreKa
           node:
-            - python train.py lr=1e-3 batch_size=1024
-            - python train.py lr=1e-4 batch_size=512
-            - python train.py lr=1e-5 batch_size=256
-            - python train.py lr=1e-6 batch_size=128
+            - `python train.py lr=1e-3 batch_size=1024`
+            - `python train.py lr=1e-4 batch_size=512`
+            - `python train.py lr=1e-5 batch_size=256`
+            - `python train.py lr=1e-6 batch_size=128`
 
 2. <{ ... }> notation to define product spaces (grid search) of sweep parameters.
     - Example:
