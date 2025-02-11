@@ -55,7 +55,7 @@ default.
 
 ## Single-task jobs
 
-<img src="./images/single_job.png" width="80%">
+<img src="./images/single_job.png" width="90%">
 <br><br>
 
 You can execute a single task (script) in the following way:
@@ -78,7 +78,7 @@ Every template by default first loads a default conda environment. The default c
 
 ## Multi-task jobs
 
-<img src="./images/multi_job.png" width="80%">
+<img src="./images/multi_job.png" width="90%">
 <br><br>
 
 If you simply want to run the exact same command multiple times, you can also use the cmd`i`x shorthand notation:
@@ -136,17 +136,17 @@ There are two ways to specify sweeps:
 
 The second example is illustrated here:
 
-<img src="./images/split_job.png" width="80%">
+<img src="./images/split_job.png" width="90%">
 <br><br>
 
 ## Chain jobs
 
-<img src="./images/single_chain_job.png" width="80%">
+<img src="./images/single_chain_job.png" width="90%">
 <br><br>
 
 This of course also works with multi-task jobs:
 
-<img src="./images/multi_chain_job.png" width="80%">
+<img src="./images/multi_chain_job.png" width="90%">
 <br><br>
 
 Note that this will keep spawning new chain jobs as long as at least one of the tasks writes a resume file.
