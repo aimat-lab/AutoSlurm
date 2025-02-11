@@ -118,13 +118,13 @@ aslurm -cn horeka_4gpu                     \
 This will run all 4 tasks in parallel and automatically assigns one GPU to each task.
 
 If you simply want to run the exact same command multiple times in parallel, you
-can also use the cmdx`i` shorthand notation:
+can also use the cmdxi shorthand notation:
 
 ```bash
 aslurm -cn horeka_4gpu cmdx4 python train.py
 ```
 
-cmdx`i` will simply repeat the following command `i` times, yielding 4 tasks.
+cmdxi will simply repeat the following command `i` times, yielding 4 tasks.
 This can be helpful when generating the final results of a research paper, where
 the experiments need to be repeated multiple times to test reproducibility.
 
