@@ -134,7 +134,7 @@ reproducibility.
 🚀 **Tip:** If you are not running GPU jobs, you should use `-o NO_gpus=None,gpus_per_task=None,max_tasks=X`, where you replace `X` with the number of tasks you 
 want to run in parallel in one job.
 
-### Automatic splitting
+### Automatic splitting across jobs
 
 Each configuration specifies a maximum number of tasks that can fit in one job.
 In case of GPU jobs, `NO_gpus` specifies the number of GPUs present. The maximum
