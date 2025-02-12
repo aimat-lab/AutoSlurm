@@ -320,7 +320,7 @@ def main():
 
     args = parser.parse_args()
 
-    with hydra.initialize(config_path="."):
+    with hydra.initialize(config_path=".", version_base=None):
         cfg = hydra.compose(config_name="general_config")
         cfg_dict = omegaconf.OmegaConf.to_container(
             cfg, resolve=True, throw_on_missing=True
@@ -350,7 +350,9 @@ def main():
                 f"Multiple default configs found that match the current hostname '{hostname}'."
             )
 
-    with hydra.initialize("./configs/"):
+        print(f"Matched hostname '{hostname}' to config '{args.config}'.")
+
+    with hydra.initialize("./configs/", version_base=None):
         cfg = hydra.compose(config_name=args.config)
         cfg_dict = omegaconf.OmegaConf.to_container(
             cfg, resolve=True, throw_on_missing=True

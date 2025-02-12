@@ -1,5 +1,6 @@
 defaults:
   - main
+  - _self_
 
 default_fillers:
   partition: '<haicore_partition>' # haicore_partition is defined in global_config.yaml
