@@ -41,3 +41,5 @@ class Config(BaseModel):
             assert (
                 self.gpus_per_task is None
             ), "gpus_per_task and max_tasks cannot be set at the same time"
+
+        return self

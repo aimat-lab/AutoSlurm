@@ -147,10 +147,10 @@ sweeps.
 
 There are two ways to specify sweeps:
 
-1. <[...]> notation to simply list the parameters of the sweep.
+1. '<[...]>' notation to simply list the parameters of the sweep.
     - Example:
         ```bash
-        aslurm -cn horeka_4gpu cmd python train.py lr=<[1e-3,1e-4,1e-5,1e-6]> batch_size=<[1024,512,256,128]>
+        aslurm -cn horeka_4gpu cmd python train.py lr='<[1e-3,1e-4,1e-5,1e-6]>' batch_size='<[1024,512,256,128]>'
         ```
         - This will run the following 4 tasks in parallel on a single HoreKa
           node:
@@ -159,10 +159,10 @@ There are two ways to specify sweeps:
             - `python train.py lr=1e-5 batch_size=256`
             - `python train.py lr=1e-6 batch_size=128`
 
-2. <{ ... }> notation to define product spaces (grid search) of sweep parameters.
+2. '<{ ... }>' notation to define product spaces (grid search) of sweep parameters.
     - Example:
         ```bash
-        aslurm -cn horeka_4gpu cmd python train.py lr=<{1e-3,1e-4,1e-5,1e-6}> batch_size=<{1024,512,128}>
+        aslurm -cn horeka_4gpu cmd python train.py lr='<{1e-3,1e-4,1e-5,1e-6}>' batch_size='<{1024,512,128}>'
         ```
         - This will create tasks using the product space of the two specified
           lists, yielding all possible combinations (12).
@@ -170,7 +170,9 @@ There are two ways to specify sweeps:
           per job (when using 1 GPU per task), the 12 tasks will be
           automatically split across 3 jobs.
 
-The second example is illustrated here:
+⚠️ **Warning:** Do not forget the quotes `''` when using the shorthand sweep syntax, otherwise it clashes with bash syntax!
+
+The second example from above is illustrated here:
 
 <img src="./images/split_job.png" width="100%">
 <br><br>

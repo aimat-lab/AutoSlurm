@@ -111,7 +111,7 @@ def create_slurm_job_files(
     ##### Build the main slurm script #####
 
     main_slurm_script += (
-        f"\n\n{build_commands_str(commands, job_start_task_index, gpus_per_task)}"
+        f"{build_commands_str(commands, job_start_task_index, gpus_per_task)}"
     )
     main_slurm_script += f"\n\nwait"  # Wait for all tasks to finish
     main_slurm_script += "\nsleep 10"  # Just to be safe
@@ -122,7 +122,10 @@ def create_slurm_job_files(
         f"eval `cat ${{PREVIOUS_SLURM_ID}}_{job_start_task_index+i}.resume`"
         for i in range(len(commands))
     ]
-    resume_slurm_script += f"\n\n{build_commands_str(resume_commands, job_start_task_index, gpus_per_task)}"
+    resume_slurm_script += (
+        f"{build_commands_str(resume_commands, job_start_task_index, gpus_per_task)}"
+    )
+    resume_slurm_script += f"\n\nwait"  # Wait for all tasks to finish
     resume_slurm_script += "\nsleep 10"  # Just to be safe
 
     ##### Run resume job if needed #####
@@ -386,10 +389,14 @@ def main():
     NO_jobs = math.ceil(num_tasks / tasks_per_job)
 
     print(
-        f"Splitting the {len(commands)} tasks into {NO_jobs} jobs (max {tasks_per_job} tasks per job)."
+        f"Splitting the {len(commands)} tasks into {NO_jobs} job(s) (max. {tasks_per_job} task(s) per job"
+        + (
+            f" using {config.gpus_per_task} GPU(s) per task"
+            if config.gpus_per_task is not None
+            else ""
+        )
+        + ")."
     )
-    if config.gpus_per_task is not None:
-        print(f"Each task will use {config.gpus_per_task} GPU(s).")
 
     task_index_counter = 0
     for i in range(NO_jobs):

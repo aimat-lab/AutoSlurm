@@ -10,8 +10,7 @@ template: |
   #SBATCH --output=/dev/null
   #SBATCH --error=/dev/null
   <additional_sbatch_configs>
-
-  source ${HOME}/.bashrc
+  source $HOME/.bashrc
   export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
   conda activate <env>
 
