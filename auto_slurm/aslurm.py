@@ -120,7 +120,7 @@ def create_slurm_job_files(
     ##### Build the resume slurm script #####
 
     resume_commands = [
-        f"eval `cat ${{PREVIOUS_SLURM_ID}}_{job_start_task_index+i}.resume`"
+        f"eval `cat ./aslurm/${{PREVIOUS_SLURM_ID}}_{job_start_task_index+i}.resume`"
         for i in range(len(commands))
     ]
     resume_slurm_script += (
