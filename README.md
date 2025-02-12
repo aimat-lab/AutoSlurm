@@ -24,9 +24,10 @@ The command `aslurm` will then be available to start jobs.
 ## Job templates
 
 `AutoSlurm` works by filling predefined bash script templates. All templates can
-be found in `./auto_slurm/configs/`. The default templates are summarized in the
-table below. Templates for other node types and new HPC clusters can easily be
-added by simply adapting one of the existing templates.
+be found in the form of template config files in `./auto_slurm/configs/`. The
+default templates are summarized in the table below. Templates for other node
+types and new HPC clusters can easily be added by simply adapting one of the
+existing templates.
 
 <img src="./images/table.png" width="100%">
 <br><br>
@@ -62,30 +63,32 @@ aslurm -cn haicore_1gpu -o env=my_env cmd python train.py
 
 If you are not using `conda`, you can easily change the default behavior by modifying `./configs/main.yaml`.
 
-Overwrites can also be used to change other parameters of the default config files. For example, if you want to run your job on `HAICORE` with a timelimit of only `1h`, you can use the following:
+Overwrites can also be used to change other parameters of the template config
+files. For example, if you want to run your job on `HAICORE` with a timelimit of
+only `1h`, you can use the following:
 
 ```bash
 aslurm -cn haicore_1gpu -o env=my_env,time=00:01:00 cmd python train.py
 ```
 
-To find out what other parameters you can overwrite, please inspect the config files in `./auto_slurm/configs/`.
+To find out what other parameters you can overwrite, please inspect
+`default_fillers` in the template config files in `./auto_slurm/configs/`.
 
 ### Automatic `hostname → config` mapping
 
-If you do not specify a config file (`-cn`), `AutoSlurm` falls back to the
-default `hostname → config` mapping defined in `global_config.yaml`. The current
-hostname is matched (with RegEx) against a list of patterns to select the
-default config file for the current cluster. You can modify `global_config.yaml`
-to select your most common configuration for each cluster.
+If you do not specify a template config file (`-cn`), `AutoSlurm` falls back to
+the default `hostname → config` mapping defined in `global_config.yaml`. The
+current hostname is matched (with RegEx) against a list of patterns to select
+the default template config file for the current cluster. You can modify
+`global_config.yaml` to select your most common configuration for each cluster.
 
 ## Multi-task jobs
 
 <img src="./images/multi_job.png" width="100%">
 <br><br>
 
-Let's say you want to execute four independent scripts, each with their own
-configuration, on a single node on `HoreKa`. This can be accomplished by
-supplying multiple commands:
+Let's say you want to execute four independent scripts on a single node on
+`HoreKa`. This can be accomplished by supplying multiple commands:
 
 ```bash
 aslurm -cn horeka_4gpu                     \
@@ -109,16 +112,24 @@ above. This can be helpful when generating the final results of a research
 paper, where the experiments need to be repeated multiple times to test
 reproducibility.
 
-🚀 **Tip:** By default, each task uses a single GPU. You can overwrite this behavior using `-o gpus_per_task=2`. In this case, each task will be assigned two GPUs.
+🚀 **Tip:** By default, each task uses a single GPU. You can overwrite this
+behavior using `--gpus_per_task 2` or `-gpt 2`. In this case, each task will be
+assigned two GPUs. You can also change `gpus_per_task` in the template config
+file directly to avoid supplying it in the command.
 
-🚀 **Tip:** If you are not running GPU jobs, you should use `-o NO_gpus=None,gpus_per_task=None,max_tasks=X`, where you replace `X` with the number of tasks you 
-want to run in parallel in one job.
+🚀 **Tip:** If you are not running GPU jobs, you should use `--gpus_per_task
+None --NO_gpus None --max_tasks X` (or `-gpt None -gpus None -mt X` in short),
+where you replace `X` with the number of tasks you want to run in parallel in
+one job. Instead of supplying this in the command, you can also edit
+`gpus_per_task`, `NO_gpus`, and `max_tasks` in the template config file
+directly.
 
 ### Automatic splitting across jobs
 
-Each configuration specifies a maximum number of tasks that can fit in one job.
-In case of GPU jobs, `NO_gpus` specifies the number of GPUs present. The maximum
-number of tasks per job is thus calculated by dividing by `gpus_per_task`.
+Each template config file specifies a maximum number of tasks that can fit in
+one job. In case of GPU jobs, `NO_gpus` specifies the number of GPUs present.
+The maximum number of tasks per job is thus calculated by dividing by
+`gpus_per_task`.
 
 🚀 **Tip:** In case of non-GPU jobs, `NO_gpus` and `gpus_per_task` should be set to None
 (see 🚀 **Tip** above). Instead, you should directly specify `max_tasks`.
@@ -155,9 +166,9 @@ There are two ways to specify sweeps:
         ```
         - This will create tasks using the product space of the two specified
           lists, yielding all possible combinations (12).
-        - Since the `horeka_4gpu` configuration allows a maximum of 4 tasks per
-          job (when using 1 GPU per task), the 12 tasks will be automatically
-          split across 3 jobs.
+        - Since the `horeka_4gpu` template config allows a maximum of 4 tasks
+          per job (when using 1 GPU per task), the 12 tasks will be
+          automatically split across 3 jobs.
 
 The second example is illustrated here:
 

@@ -16,6 +16,17 @@ from auto_slurm.config import Config
 from auto_slurm.config import GeneralConfig
 
 
+def parse_int_or_none(value: str):
+    if value.lower() == "none":
+        return None
+    try:
+        return int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            f"Invalid value {value}. Must be an integer or 'None'."
+        )
+
+
 def build_commands_str(
     commands: List[str], job_start_task_index: int, gpus_per_task: Optional[int] = None
 ) -> str:
@@ -280,6 +291,33 @@ def main():
         help="Dry run, do not submit slurm jobs, just create the job files.",
     )
 
+    parser.add_argument(
+        "-gpt",
+        "--gpus_per_task",
+        type=str,
+        help="Number of GPUs to assign to each task. This overwrites the config file setting.",
+        required=False,
+        default="",
+    )
+
+    parser.add_argument(
+        "-gpus",
+        "--NO_gpus",
+        type=str,
+        help="Total number of GPUs per job. This overwrites the config file setting.",
+        required=False,
+        default="",
+    )
+
+    parser.add_argument(
+        "-mt",
+        "--max_tasks",
+        type=str,
+        help="Maximum number of tasks per job. This overwrites the config file setting.",
+        required=False,
+        default="",
+    )
+
     args = parser.parse_args()
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -319,6 +357,13 @@ def main():
             cfg, resolve=True, throw_on_missing=True
         )
         config: Config = Config(**cfg_dict)
+
+        if args.gpus_per_task != "":
+            config.gpus_per_task = parse_int_or_none(args.gpus_per_task)
+        if args.NO_gpus != "":
+            config.NO_gpus = parse_int_or_none(args.NO_gpus)
+        if args.max_tasks != "":
+            config.max_tasks = parse_int_or_none(args.max_tasks)
 
     default_fillers = config.default_fillers
     if args.overwrite_fillers is not None:
