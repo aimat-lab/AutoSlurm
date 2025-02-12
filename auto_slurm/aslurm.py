@@ -134,7 +134,9 @@ def create_slurm_job_files(
     # In both the main and resume script, we check if any resume files have been created (SLURM_JOB_ID_*.resume).
     # If yes, we schedule a new job to resume the tasks.
 
-    resume_str = f"\n\nif [ -f ./aslurm/${{SLURM_JOB_ID}}_*.resume ]; then"
+    resume_str = (
+        r'\n\nif compgen -G "./aslurm/${SLURM_JOB_ID}_*.resume" > /dev/null; then'
+    )
     resume_str += (
         f"\n\tsbatch --export=PREVIOUS_SLURM_ID=${{SLURM_JOB_ID}} {resume_script_path}"
     )
