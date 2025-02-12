@@ -235,7 +235,7 @@ file (see above).
 
 Here is an example of a single-task chain job, where the task is resumed two times:
 
-<img src="./images/single_chain_job.png" width="100%">
+<img src="./images/single_resume_job.png" width="100%">
 <br><br>
 
 Of course, chain jobs also work with multi-task jobs:
