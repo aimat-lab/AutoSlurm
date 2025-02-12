@@ -330,7 +330,7 @@ def main():
             os.path.join(os.path.dirname(__file__), "general_config.yaml"),
             os.path.expanduser("~/.config/auto_slurm/general_config.yaml"),
         )
-        print("Created default general_config.yaml in ~/.config/auto_slurm")
+        print("Created default general_config.yaml in ~/.config/auto_slurm\n")
 
     args = parser.parse_args()
 
