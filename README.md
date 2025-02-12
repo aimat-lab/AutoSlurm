@@ -28,28 +28,8 @@ be found in `./auto_slurm/configs/`. The default templates are summarized in the
 table below. Templates for other node types and new HPC clusters can easily be
 added by simply adapting one of the existing templates.
 
-| Cluster  	| Config name          	| Slurm partition   	| GPUs                   	| Threads (with hyperthreading) 	| Memory     	| Time limit 	|
-|----------	|----------------------	|-------------------	|------------------------	|-------------------------------	|------------	|------------	|
-| HAICORE  	| haicore_4gpu         	| normal (advanced) 	| 4 x A100 (40GB)        	| 152                           	| 501600 MB  	| 72h        	|
-| HAICORE  	| haicore_1gpu         	| normal (advanced) 	| 1 x A100 (40GB)        	| 38                            	| 125400 MB  	| 72h        	|
-| HAICORE  	| haicore_halfgpu      	| normal (advanced) 	| 0.5 x A100 (40GB)      	| 19                            	| 62700 MB   	| 72h        	|
-| HoreKa   	| horeka_4gpu          	| accelerated       	| 4 x A100 (40GB)        	| 152                           	| 501600 MB  	| 48h        	|
-| HoreKa   	| horeka_1gpu          	| accelerated       	| 1 x A100 (40GB)        	| 38                            	| 125400 MB  	| 48h        	|
-| HoreKa   	| horeka_4gpu_h100     	| accelerated-h100  	| 4 x H100 (80GB)        	| 128                           	| 772000 MB  	| 48h        	|
-| HoreKa   	| horeka_1gpu_h100     	| accelerated-h100  	| 1 x H100 (80GB)        	| 32                            	| 193000 MB  	| 48h        	|
-| JUWELS   	| juwels_4gpu          	| booster           	| 4 x A100 (40GB)        	| 48 (Hyperthreading disabled)  	| 515000 MB  	| 24h        	|
-| bwUni    	| bwuni_4gpu_gpu4      	| gpu_4             	| 4 x V100 (32GB)        	| 80                            	| 376000 MB  	| 48h        	|
-| bwUni    	| bwuni_1gpu_gpu4      	| gpu_4             	| 1 x V100 (32GB)        	| 20                            	| 94000 MB   	| 48h        	|
-| bwUni    	| bwuni_8gpu_gpu8      	| gpu_8             	| 8 x V100 (32GB)        	| 80                            	| 752000 MB  	| 48h        	|
-| bwUni    	| bwuni_1gpu_gpu8      	| gpu_8             	| 1 x V100 (32GB)        	| 10                            	| 94000 MB   	| 48h        	|
-| bwUni    	| bwuni_4gpu_gpu4_a100 	| gpu_4_a100        	| 4 x A100 (40GB)        	| 128                           	| 510000 MB  	| 48h        	|
-| bwUni    	| bwuni_1gpu_gpu4_a100 	| gpu_4_a100        	| 1 x A100 (40GB)        	| 32                            	| 127500 MB  	| 48h        	|
-| bwUni    	| bwuni_4gpu_gpu4_h100 	| gpu_4_h100        	| 4 x H100 (80GB)        	| 128                           	| 510000 MB  	| 48h        	|
-| bwUni    	| bwuni_1gpu_gpu4_h100 	| gpu_4_h100        	| 1 x H100 (80GB)        	| 32                            	| 127500 MB  	| 48h        	|
-| int-nano 	| intnano_2gpu         	| gpu               	| 2 x RTX 2080 TI (11GB) 	| 32 (Hyperthreading disabled)  	| 128000 MB  	| unlimited  	|
-| int-nano 	| intnano_1gpu         	| gpu               	| 1 x RTX 2080 TI (11GB) 	| 16 (Hyperthreading disabled)  	| 64000 MB   	| unlimited  	|
-| int-nano 	| intnano_3gpu_a100    	| aimat             	| 3 x A100 (80GB)        	| 384                           	| 1490000 MB 	| unlimited  	|
-| int-nano 	| intnano_1gpu_a100    	| aimat             	| 1 x A100 (80GB)        	| 128                           	| 496666 MB  	| unlimited  	|
+<img src="./images/table.png" width="100%">
+<br><br>
 
 As one can see in this table, if less than all available GPUs of a node are
 used, the other ressources (CPUs and memory) are scaled down proportionally by
