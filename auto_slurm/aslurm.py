@@ -6,6 +6,7 @@ import subprocess
 import re
 import math
 import uuid
+import shutil
 from subprocess import CalledProcessError
 from typing import List
 import hydra
@@ -321,9 +322,23 @@ def main():
         default="",
     )
 
+    if not os.path.exists(
+        os.path.expanduser("~/.config/auto_slurm/general_config.yaml")
+    ):
+        os.makedirs(os.path.expanduser("~/.config/auto_slurm"), exist_ok=True)
+        shutil.copy(
+            os.path.join(os.path.dirname(__file__), "general_config.yaml"),
+            os.path.expanduser("~/.config/auto_slurm/general_config.yaml"),
+        )
+        print("Created default general_config.yaml in ~/.config/auto_slurm")
+
     args = parser.parse_args()
 
-    with hydra.initialize(config_path=".", version_base=None):
+    general_config_path = os.path.relpath(
+        os.path.expanduser("~/.config/auto_slurm"),
+        start=os.path.dirname(__file__),
+    )  # Needs to be relative to the current script!
+    with hydra.initialize(config_path=general_config_path, version_base=None):
         cfg = hydra.compose(config_name="general_config")
         cfg_dict = omegaconf.OmegaConf.to_container(
             cfg, resolve=True, throw_on_missing=True

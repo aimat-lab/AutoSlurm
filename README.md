@@ -54,7 +54,11 @@ This will execute `python train.py` using a single GPU on `HAICORE`.
 ### Overwrites
 
 Every slurm job first activates a default `conda` environment. The default
-environment can be specified in `global_config.yaml`. Furthermore, you can use
+environment can be specified in `~/.config/auto_slurm/general_config.yaml`.
+A default version of this config file will be written after running `aslurm`
+for the first time, e.g. `aslurm --help`.
+
+Furthermore, you can use
 overwrites (flag `-o`) to overwrite the environment for individual jobs:
 
 ```bash
