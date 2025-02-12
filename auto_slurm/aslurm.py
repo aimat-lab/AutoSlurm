@@ -135,12 +135,12 @@ def create_slurm_job_files(
     # If yes, we schedule a new job to resume the tasks.
 
     resume_str = (
-        r'\n\nif compgen -G "./aslurm/${SLURM_JOB_ID}_*.resume" > /dev/null; then'
+        '\n\nif compgen -G "./aslurm/${SLURM_JOB_ID}_*.resume" > /dev/null; then'
     )
     resume_str += (
         f"\n\tsbatch --export=PREVIOUS_SLURM_ID=${{SLURM_JOB_ID}} {resume_script_path}"
     )
-    resume_str += f"\nfi"
+    resume_str += "\nfi"
 
     main_slurm_script += resume_str
     resume_slurm_script += resume_str
