@@ -224,7 +224,7 @@ def expand_commands(commands: List[str]) -> List[str]:
 
 
 def main():
-    if not len(sys.argv) == 1 and not (sys.argv[1] == "-h" or sys.argv[1] == "--help"):
+    if len(sys.argv) == 1 or (not (sys.argv[1] == "-h" or sys.argv[1] == "--help")):
         command_start_indices = []
         command_repetitions = []
         for i in range(1, len(sys.argv)):
@@ -270,7 +270,7 @@ def main():
         "-cn",
         "--config",
         type=str,
-        help="Name of the config file in the configs directory (without the .yaml extension).",
+        help="Name of the template config file in the configs directory (without the .yaml extension).",
         required=False,
         default=None,
     )
@@ -279,7 +279,7 @@ def main():
         "-o",
         "--overwrite_fillers",
         type=str,
-        help="Key value pairs to overwrite default filler values specified in the config file (format: key1=value1,key2=value2).",
+        help="Key value pairs to overwrite default filler values specified in the template config file (format: key1=value1,key2=value2).",
         required=False,
         default=None,
     )
@@ -295,7 +295,7 @@ def main():
         "-gpt",
         "--gpus_per_task",
         type=str,
-        help="Number of GPUs to assign to each task. This overwrites the config file setting.",
+        help="Number of GPUs to assign to each task. This overwrites the template config file setting.",
         required=False,
         default="",
     )
@@ -304,7 +304,7 @@ def main():
         "-gpus",
         "--NO_gpus",
         type=str,
-        help="Total number of GPUs per job. This overwrites the config file setting.",
+        help="Total number of GPUs per job. This overwrites the template config file setting.",
         required=False,
         default="",
     )
@@ -313,15 +313,14 @@ def main():
         "-mt",
         "--max_tasks",
         type=str,
-        help="Maximum number of tasks per job. This overwrites the config file setting.",
+        help="Maximum number of tasks per job. This overwrites the template config file setting.",
         required=False,
         default="",
     )
 
     args = parser.parse_args()
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    with hydra.initialize(config_path=dir_path):
+    with hydra.initialize(config_path="."):
         cfg = hydra.compose(config_name="general_config")
         cfg_dict = omegaconf.OmegaConf.to_container(
             cfg, resolve=True, throw_on_missing=True
@@ -351,7 +350,7 @@ def main():
                 f"Multiple default configs found that match the current hostname '{hostname}'."
             )
 
-    with hydra.initialize(config_path=os.path.join(dir_path, "configs")):
+    with hydra.initialize("./configs/"):
         cfg = hydra.compose(config_name=args.config)
         cfg_dict = omegaconf.OmegaConf.to_container(
             cfg, resolve=True, throw_on_missing=True

@@ -1,9 +1,9 @@
 hostname_config_mappings:
-  ".*\.int-nano\.int\.kit\.edu": "intnano_1gpu"
-  "int-nano": "intnano_1gpu"
-  ".*\.juwels": "juwels_4gpu"
-  "haicn.*\.localdomain": "haicore_1gpu"
-  "hkn.*\.localdomain": "horeka_1gpu"
+  '.*\.int-nano\.int\.kit\.edu': 'intnano_1gpu'
+  'int-nano': 'intnano_1gpu'
+  '.*\.juwels': 'juwels_4gpu'
+  'haicn.*\.localdomain': 'haicore_1gpu'
+  'hkn.*\.localdomain': 'horeka_1gpu'
 
 global_fillers:
   env: "my_env"
