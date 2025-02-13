@@ -138,9 +138,8 @@ def create_slurm_job_files(
     resume_str = (
         '\n\nif compgen -G "./.aslurm/${SLURM_JOB_ID}_*.resume" > /dev/null; then'
     )
-    resume_str += (
-        f"\n\tsbatch --export=PREVIOUS_SLURM_ID=${{SLURM_JOB_ID}} {resume_script_path}"
-    )
+    resume_str += "\n\texport PREVIOUS_SLURM_ID=${SLURM_JOB_ID}"
+    resume_str += f"\n\tsbatch {resume_script_path}"
     resume_str += "\nfi"
 
     main_slurm_script += resume_str
