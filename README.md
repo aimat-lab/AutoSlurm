@@ -11,6 +11,9 @@ sweeps. A large number of ready-to-use templates for all major HPC clusters at
 KIT and beyond exist, such that you can immediately start throwing compute at
 your problems without writing boring job scripts yourself.
 
+🚀 **Note:** If things do not work as expected, if you have questions, or if you
+have ideas for new features, please let me (Henrik) know.
+
 ## Setup
 
 To get started, simply install the repository as a pip package:
@@ -25,16 +28,20 @@ The command `aslurm` will then be available to start jobs.
 
 `AutoSlurm` works by filling predefined bash script templates. All templates can
 be found in the form of template config files in `./auto_slurm/configs/`. The
-default templates are summarized in the table below. Templates for other node
-types and new HPC clusters can easily be added by simply adapting one of the
-existing templates.
+default templates are summarized in the table below. 
 
 <img src="./images/table.png" width="100%">
 <br><br>
 
 As one can see in this table, if less than all available GPUs of a node are
 used, the other ressources (CPUs and memory) are scaled down proportionally by
-default.
+default. This behavior can be changed using overwrites (see below).
+
+🚀 **Note:** Templates for other node types and new HPC clusters can easily be
+added by simply adapting one of the existing templates. Feel free to directly
+push new job templates to this repository, such that other people can use them,
+too. Please also notify me after adding new templates, such that I can update
+the table.
 
 ## Single-task jobs
 
