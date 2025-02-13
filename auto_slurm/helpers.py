@@ -54,9 +54,9 @@ def write_resume_file(command: str):
     )  # if this job has multiple tasks (processes) in one job
 
     if slurm_id is not None:
-        os.makedirs("./aslurm", exist_ok=True)
+        os.makedirs("./.aslurm", exist_ok=True)
         with open(
-            f"./aslurm/{slurm_id}" + (f"_{task_index}") + ".resume",
+            f"./.aslurm/{slurm_id}" + (f"_{task_index}") + ".resume",
             "w",
         ) as f:
             f.write(command)

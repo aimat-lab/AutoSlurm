@@ -112,7 +112,10 @@ def create_slurm_job_files(
     ##### Build the main slurm script #####
 
     main_slurm_script += (
-        f"{build_commands_str(commands, job_start_task_index, gpus_per_task)}"
+        "\nThis is running the slurm job script (main) located at " + main_script_path
+    )
+    main_slurm_script += (
+        f"\n{build_commands_str(commands, job_start_task_index, gpus_per_task)}"
     )
     main_slurm_script += f"\n\nwait"  # Wait for all tasks to finish
     main_slurm_script += "\nsleep 10"  # Just to be safe
@@ -120,11 +123,17 @@ def create_slurm_job_files(
     ##### Build the resume slurm script #####
 
     resume_commands = [
-        f"eval `cat ./aslurm/${{PREVIOUS_SLURM_ID}}_{job_start_task_index+i}.resume`"
+        f"eval `cat ./.aslurm/${{PREVIOUS_SLURM_ID}}_{job_start_task_index+i}.resume`"
         for i in range(len(commands))
     ]
     resume_slurm_script += (
-        f"{build_commands_str(resume_commands, job_start_task_index, gpus_per_task)}"
+        "\nThis is running the slurm job script (resume) located at "
+        + resume_script_path
+        + "\n"
+        + "Resuming work of previous job with ID PREVIOUS_SLURM_ID=${PREVIOUS_SLURM_ID}."
+    )
+    resume_slurm_script += (
+        f"\n{build_commands_str(resume_commands, job_start_task_index, gpus_per_task)}"
     )
     resume_slurm_script += f"\n\nwait"  # Wait for all tasks to finish
     resume_slurm_script += "\nsleep 10"  # Just to be safe
@@ -135,7 +144,7 @@ def create_slurm_job_files(
     # If yes, we schedule a new job to resume the tasks.
 
     resume_str = (
-        '\n\nif compgen -G "./aslurm/${SLURM_JOB_ID}_*.resume" > /dev/null; then'
+        '\n\nif compgen -G "./.aslurm/${SLURM_JOB_ID}_*.resume" > /dev/null; then'
     )
     resume_str += (
         f"\n\tsbatch --export=PREVIOUS_SLURM_ID=${{SLURM_JOB_ID}} {resume_script_path}"
