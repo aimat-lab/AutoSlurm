@@ -112,12 +112,7 @@ def create_slurm_job_files(
     ##### Build the main slurm script #####
 
     main_slurm_script += (
-        "\necho 'This is running the slurm job script (main) located at "
-        + main_script_path
-        + "'"
-    )
-    main_slurm_script += (
-        f"\n{build_commands_str(commands, job_start_task_index, gpus_per_task)}"
+        f"{build_commands_str(commands, job_start_task_index, gpus_per_task)}"
     )
     main_slurm_script += f"\n\nwait"  # Wait for all tasks to finish
     main_slurm_script += "\nsleep 10"  # Just to be safe
@@ -128,15 +123,9 @@ def create_slurm_job_files(
         f"eval `cat ./.aslurm/${{PREVIOUS_SLURM_ID}}_{job_start_task_index+i}.resume`"
         for i in range(len(commands))
     ]
+
     resume_slurm_script += (
-        "\necho 'This is running the slurm job script (resume) located at "
-        + resume_script_path
-        + "'"
-        + "\necho'"
-        + "Resuming work of previous job with slurm ID ${PREVIOUS_SLURM_ID}.'"
-    )
-    resume_slurm_script += (
-        f"\n{build_commands_str(resume_commands, job_start_task_index, gpus_per_task)}"
+        f"{build_commands_str(resume_commands, job_start_task_index, gpus_per_task)}"
     )
     resume_slurm_script += f"\n\nwait"  # Wait for all tasks to finish
     resume_slurm_script += "\nsleep 10"  # Just to be safe
