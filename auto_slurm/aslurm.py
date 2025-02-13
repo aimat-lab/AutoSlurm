@@ -112,7 +112,9 @@ def create_slurm_job_files(
     ##### Build the main slurm script #####
 
     main_slurm_script += (
-        "\nThis is running the slurm job script (main) located at " + main_script_path
+        "\necho 'This is running the slurm job script (main) located at "
+        + main_script_path
+        + "'"
     )
     main_slurm_script += (
         f"\n{build_commands_str(commands, job_start_task_index, gpus_per_task)}"
@@ -127,10 +129,11 @@ def create_slurm_job_files(
         for i in range(len(commands))
     ]
     resume_slurm_script += (
-        "\nThis is running the slurm job script (resume) located at "
+        "\necho 'This is running the slurm job script (resume) located at "
         + resume_script_path
-        + "\n"
-        + "Resuming work of previous job with ID PREVIOUS_SLURM_ID=${PREVIOUS_SLURM_ID}."
+        + "'"
+        + "\necho'"
+        + "Resuming work of previous job with slurm ID ${PREVIOUS_SLURM_ID}.'"
     )
     resume_slurm_script += (
         f"\n{build_commands_str(resume_commands, job_start_task_index, gpus_per_task)}"
