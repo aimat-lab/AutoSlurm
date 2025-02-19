@@ -49,7 +49,7 @@ def build_commands_str(
     for i, command in enumerate(commands):
         command_line = (
             command
-            + " &> slurm-${SLURM_JOB_ID}"
+            + " &>> slurm-${SLURM_JOB_ID}"
             + (f"_{job_start_task_index+i}" if len(commands) > 1 else "")
             + ".out &"
         )
