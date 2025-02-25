@@ -56,7 +56,7 @@ aslurm -cn haicore_1gpu cmd python train.py
 
 This will execute `python train.py` using a single GPU on `HAICORE`.
 
-🚀 **Tip:** When running `aslurm`, the slurm job files will be written to `./aslurm/` and then executed with `sbatch`. If you only want to create the job files without executing them (for example, for testing), you can run `aslurm` with the `--dry` flag.</span>
+🚀 **Tip:** When running `aslurm`, the slurm job files will be written to `./.aslurm/` and then executed with `sbatch`. If you only want to create the job files without executing them (for example, for testing), you can run `aslurm` with the `--dry` flag.
 
 ### Overwrites
 
@@ -236,6 +236,11 @@ Whenever a resume file is found after all tasks of a job terminate, `AutoSlurm`
 will automatically schedule a resume job to pick up the work. You do not have to
 modify your `aslurm` command for chain jobs, you simply have to write the resume
 file (see above).
+
+⚠️ **Warning:** The resume files will be written to the `.aslurm` directory, which is 
+referenced relative to the current working directory. Thus, make sure to not change 
+the working directory while your task is running - or at least change it back before
+writing the resume file!
 
 Here is an example of a single-task chain job, where the task is resumed two times:
 
