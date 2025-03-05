@@ -255,3 +255,26 @@ Of course, chain jobs also work with multi-task jobs:
 In this case, `AutoSlurm` will keep spawning new chain jobs as long as at least
 one of the tasks writes a resume file. If no task writes a resume file, the
 chain ends.
+
+## Interactive jobs
+
+Sometimes, all you want is an interactive shell on one of the compute nodes, where you can execute commands by hand.
+With `AutoSlurm`, you can simply use the `-i` (`--interactive`) flag to start such a job:
+
+```bash
+aslurm -i
+```
+
+This will start an interactive job in the background. You can attach your shell to this job by running:
+
+```bash
+srun --jobid <slurm_jobid> --pty bash
+```
+
+Running `aslurm -i` will also print this command for you, such that you don't have to remember it.
+
+After you finished your interactive work, do not forget to cancel the interactive job again:
+
+```bash
+scancel <slurm_jobid>
+```
