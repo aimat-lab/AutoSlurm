@@ -348,7 +348,7 @@ def main():
             print(
                 f"{len(commands)} commands were specified, but will be ignored in interactive mode."
             )
-        commands = ["{while true; do sleep 10000; done}"]
+        commands = ["bash -c '{ while true; do sleep 10000; done; }'"]
     else:
         if len(commands) == 0:
             print("Error: No commands specified.")
