@@ -452,7 +452,7 @@ def main():
         if not args.dry:
             job_id = launch_slurm_job(main_script_path, job_index=i)
 
-            if job_id is not None:
+            if job_id is not None and args.interactive:
                 print("You can attach a bash shell to the job using:")
                 print(f"srun --jobid {job_id} --pty bash")
                 print("Make sure to cancel the job when you are done using it:")
