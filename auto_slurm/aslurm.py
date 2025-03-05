@@ -173,10 +173,12 @@ def launch_slurm_job(slurm_file_path: str, job_index: int):
             # Extract the job ID from the output:
             job_id = output.strip().split()[-1]
             print(f"Submitted job {job_index} with slurm_id {job_id}.")
+            return job_id
         else:
             print(
                 f"Error: Failed starting job {job_index}. Could not find job ID in sbatch output."
             )
+            return None
 
     except CalledProcessError as e:
         print(
@@ -184,6 +186,7 @@ def launch_slurm_job(slurm_file_path: str, job_index: int):
         )
         print(e.stdout)
         print(e.stderr)
+        return None
 
 
 def expand_commands(commands: List[str]) -> List[str]:
@@ -242,31 +245,27 @@ def main():
                 )
                 command_repetitions.append(command_repetition)
 
-        if len(command_start_indices) == 0:
-            print(
-                "Error: No command specified (should be after 'cmd' in the end of the bash command)."
-            )
-            sys.exit(1)
+        if len(command_start_indices) > 0:
+            commands = []
+            for i in range(len(command_start_indices)):
+                command_index = command_start_indices[i]
+                if i == len(command_start_indices) - 1:
+                    command = " ".join(sys.argv[command_index + 1 :])
+                else:
+                    command = " ".join(
+                        sys.argv[command_index + 1 : command_start_indices[i + 1]]
+                    )
 
-        # Get list of commands:
-        commands = []
-        for i in range(len(command_start_indices)):
-            command_index = command_start_indices[i]
-            if i == len(command_start_indices) - 1:
-                command = " ".join(sys.argv[command_index + 1 :])
-            else:
-                command = " ".join(
-                    sys.argv[command_index + 1 : command_start_indices[i + 1]]
-                )
+                commands.extend([command] * command_repetitions[i])
 
-            commands.extend([command] * command_repetitions[i])
+            commands = expand_commands(
+                commands
+            )  # Expand using the <[ ... ]> and <{ ... }> shorthand syntax for sweeps
 
-        commands = expand_commands(
-            commands
-        )  # Expand using the <[ ... ]> and <{ ... }> shorthand syntax for sweeps
-
-        # Remove the commands from sys.argv
-        sys.argv = sys.argv[: command_start_indices[0]]
+            # Remove the commands from sys.argv
+            sys.argv = sys.argv[: command_start_indices[0]]
+        else:
+            commands = []
 
     parser = argparse.ArgumentParser(
         description="Slurm submission helper that writes slurm job scripts based on templates and starts them for you."
@@ -324,6 +323,13 @@ def main():
         default="",
     )
 
+    parser.add_argument(
+        "-i",
+        "--interactive",
+        action="store_true",
+        help="Start an interactive job that you can attach a bash shell to. Ignores all specified commands.",
+    )
+
     if not os.path.exists(
         os.path.expanduser("~/.config/auto_slurm/general_config.yaml")
     ):
@@ -335,6 +341,18 @@ def main():
         print("Created default general_config.yaml in ~/.config/auto_slurm\n")
 
     args = parser.parse_args()
+
+    if args.interactive:
+        print("Creating an interactive job that you can attach a bash shell to...")
+        if len(commands) > 0:
+            print(
+                f"{len(commands)} commands were specified, but will be ignored in interactive mode."
+            )
+        commands = ["{while true; do sleep 10000; done}"]
+    else:
+        if len(commands) == 0:
+            print("Error: No commands specified.")
+            sys.exit(1)
 
     general_config_path = os.path.relpath(
         os.path.expanduser("~/.config/auto_slurm"),
@@ -432,7 +450,13 @@ def main():
         )
 
         if not args.dry:
-            launch_slurm_job(main_script_path, job_index=i)
+            job_id = launch_slurm_job(main_script_path, job_index=i)
+
+            if job_id is not None:
+                print("You can attach a bash shell to the job using:")
+                print(f"srun --jobid {job_id} --pty bash")
+                print("Make sure to cancel the job when you are done using it:")
+                print(f"scancel {job_id}")
 
         task_index_counter += tasks_per_job
 
