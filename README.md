@@ -7,12 +7,14 @@
 `AutoSlurm` automatically generates slurm job scripts based on reusable
 templates and starts them for you. This includes support for multi-task
 multi-GPU jobs, automatic creation of infinite chain jobs, and hyperparameter
-sweeps. A large number of ready-to-use templates for all major HPC clusters at
-KIT and beyond exist, such that you can immediately start throwing compute at
-your problems without writing boring job scripts yourself.
+sweeps. 
+
+The available default templates focus on HPC clusters available at the
+Karlsruhe Institute of Technology and beyond, but creating templates
+for other HPC clusters is straightforward.
 
 🚀 **Note:** If things do not work as expected, if you have questions, or if you
-have ideas for new features, please let me (Henrik) know.
+have ideas for new features, please add an issue to the repository!
 
 ## Setup
 
@@ -38,10 +40,9 @@ used, the other ressources (CPUs and memory) are scaled down proportionally by
 default. This behavior can be changed using overwrites (see below).
 
 🚀 **Note:** Templates for other node types and new HPC clusters can easily be
-added by simply adapting one of the existing templates. Feel free to directly
-push new job templates to this repository, such that other people can use them,
-too. Please also notify me after adding new templates, such that I can update
-the table.
+added by simply adapting one of the existing templates. Feel free to submit
+new job templates to this repository in the form of a pull request, 
+such that other people can use them, too. 
 
 ## Single-task jobs
 
