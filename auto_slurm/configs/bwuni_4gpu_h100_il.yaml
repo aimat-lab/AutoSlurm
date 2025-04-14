@@ -3,11 +3,11 @@ defaults:
   - _self_
 
 default_fillers:
-  partition: "gpu_4"
+  partition: "gpu_h100_il"
   job_name: "bwuni"
   time: "48:00:00"
-  cpus: "80"
-  mem: "376000mb"
+  cpus: "128"
+  mem: "510000mb"
   gres: "gpu:4"
 
 NO_gpus: 4

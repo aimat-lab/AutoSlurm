@@ -3,7 +3,7 @@ defaults:
   - _self_
 
 default_fillers:
-  partition: "gpu_4_a100"
+  partition: "gpu_a100_il"
   job_name: "bwuni"
   time: "48:00:00"
   cpus: "128"
