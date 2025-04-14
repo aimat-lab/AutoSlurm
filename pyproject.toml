@@ -18,3 +18,6 @@ dependencies = ["hydra-core"]
 
 [project.scripts]
 aslurm = "auto_slurm.aslurm:main"
+
+[tool.setuptools.package-data]
+"auto_slurm" = ["general_config.yaml", "configs/*"]
