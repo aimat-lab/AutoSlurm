@@ -14,7 +14,7 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.7"
-dependencies = ["hydra-core"]
+dependencies = ["hydra-core", "pydantic>=2.5.3"]
 
 [project.scripts]
 aslurm = "auto_slurm.aslurm:main"
