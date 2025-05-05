@@ -6,7 +6,7 @@ import subprocess
 import re
 import math
 import uuid
-import shutil
+import pathlib
 from subprocess import CalledProcessError
 from typing import List
 import hydra
@@ -15,6 +15,12 @@ from typing import Optional
 from itertools import product
 from auto_slurm.config import Config
 from auto_slurm.config import GeneralConfig
+from auto_slurm.config import AutoSlurmConfig
+
+# This is the absolute string path to the auto-slurm PACKAGE folder which has been
+# installed in the local python environment and can be used as the base path for 
+# accessing the "configs" folder, for example.
+PATH: str = pathlib.Path(__file__).parent.absolute()
 
 
 def parse_int_or_none(value: str):
@@ -330,16 +336,18 @@ def main():
         help="Start an interactive job that you can attach a bash shell to. Ignores all specified commands.",
     )
 
-    if not os.path.exists(
-        os.path.expanduser("~/.config/auto_slurm/general_config.yaml")
-    ):
-        os.makedirs(os.path.expanduser("~/.config/auto_slurm"), exist_ok=True)
-        shutil.copy(
-            os.path.join(os.path.dirname(__file__), "general_config.yaml"),
-            os.path.expanduser("~/.config/auto_slurm/general_config.yaml"),
-        )
-        print("Created default general_config.yaml in ~/.config/auto_slurm\n")
+    # jt - 02.05.25
+    # Replaced the manual creation of the config folder and the copying of the general_config.yaml file
+    # with the new AutoSlurmConfig class that wraps this functionality.
+    aslurm_config: AutoSlurmConfig = AutoSlurmConfig()
+    # This method will set up the config folder and do all of the other setup steps such as copying the 
+    # general_config.yaml file to the config folder if it does not exist yet.
+    # However, this method will only do all of that if it is necessary, i.e. if the config folder does 
+    # not exist yet - otherwise it will not do anything.
+    aslurm_config.setup_if_necessary()
 
+    # ~ Argument Parsing
+    # After all of the setup is done, the parsing of the command line arguments now actually happens.
     args = parser.parse_args()
 
     if args.interactive:
@@ -390,19 +398,49 @@ def main():
 
         print(f"Matched hostname '{hostname}' to config '{args.config}'.")
 
-    with hydra.initialize("./configs/", version_base=None):
-        cfg = hydra.compose(config_name=args.config)
-        cfg_dict = omegaconf.OmegaConf.to_container(
-            cfg, resolve=True, throw_on_missing=True
-        )
-        config: Config = Config(**cfg_dict)
+    # jt - 02.05.25
+    # Instead of using only the default config folder to search the hydra configs, there is now the 
+    # possibility of using a list of folders to discover the config files from.
+    # We use this to also search the custom "configs" folder in the ".config/auto_slurm/" location.
+    
+    config_source_paths: List[str] = [
+        # We put the custom folder first here such that we can use it to override the default configs 
+        # that are shipped with the package if we want to.
+        aslurm_config.configs_folder_path,
+        # This is the configs folder that is shipped with the package.
+        os.path.join(PATH, 'configs')
+    ]
 
-        if args.gpus_per_task != "":
-            config.gpus_per_task = parse_int_or_none(args.gpus_per_task)
-        if args.NO_gpus != "":
-            config.NO_gpus = parse_int_or_none(args.NO_gpus)
-        if args.max_tasks != "":
-            config.max_tasks = parse_int_or_none(args.max_tasks)
+    config: Optional[Config] = None
+    for source_path in config_source_paths:
+        
+        try:
+            with hydra.initialize_config_dir(source_path, version_base=None):
+                cfg = hydra.compose(config_name=args.config)
+                cfg_dict = omegaconf.OmegaConf.to_container(
+                    cfg, resolve=True, throw_on_missing=True
+                )
+                config: Config = Config(**cfg_dict)
+                break
+            
+        except hydra.errors.MissingConfigException as exc:
+            continue
+
+    # If "config" remains None after the loop, that means that no config with the given name was found 
+    # in any of the possible locations...
+    if config is None:
+        raise FileNotFoundError(
+            f'There exists no AutoSlurm config file with the name "{args.config}"!. '
+            f'Please check the list of available configs...'
+        )
+
+    if args.gpus_per_task != "":
+        config.gpus_per_task = parse_int_or_none(args.gpus_per_task)
+    if args.NO_gpus != "":
+        config.NO_gpus = parse_int_or_none(args.NO_gpus)
+    if args.max_tasks != "":
+        config.max_tasks = parse_int_or_none(args.max_tasks)
+        
 
     default_fillers = config.default_fillers
     if args.overwrite_fillers is not None:
