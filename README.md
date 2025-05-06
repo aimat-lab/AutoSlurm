@@ -80,7 +80,7 @@ files. For example, if you want to run your job on `HAICORE` with a timelimit of
 only `1h`, you can use the following:
 
 ```bash
-aslurm -cn haicore_1gpu -o env=my_env,time=00:01:00 cmd python train.py
+aslurm -cn haicore_1gpu -o env=my_env,time=01:00:00 cmd python train.py
 ```
 
 To find out what other parameters you can overwrite, please inspect
