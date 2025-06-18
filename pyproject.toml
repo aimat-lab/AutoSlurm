@@ -27,7 +27,7 @@ aslurm = "auto_slurm.aslurm:main"
 aslurmx = "auto_slurm.aslurmx:aslurm"
 
 [tool.setuptools.package-data]
-"auto_slurm" = ["general_config.yaml", "configs/*", "VERSION"]
+"auto_slurm" = ["VERSION", "general_config.yaml", "configs/*", "templates/*"]
 
 # Version Bumping
 # ===============
