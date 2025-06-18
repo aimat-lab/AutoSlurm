@@ -24,10 +24,11 @@ class GeneralConfig(BaseModel):
 
 
 class Config(BaseModel):
+    
     model_config = ConfigDict(extra="forbid")
 
     template: str
-    default_fillers: Dict[str, str]
+    default_fillers: Dict[str, Optional[str]]
 
     NO_gpus: Optional[PositiveInt]
     max_tasks: Optional[PositiveInt]
@@ -82,13 +83,19 @@ class AutoSlurmConfig:
         # This will be the path to the "configs" subfolder in our own config folder where 
         # the use can define local custom config files for the aslurm command.
         self.configs_folder_path: str = os.path.join(self.folder_path, 'configs')
+        
+        # This will be the path to the "templates" subfolder in our own config folder.
+        # We can use this folder to overwrite the default jinja2 templates for the 
+        # slurm scripts for example.
+        self.templates_folder_path: str = os.path.join(self.folder_path, 'templates')
     
     def setup_if_necessary(self) -> None:
         """
         Checks if the .config/auto-slurm folder exists. If it does not exist, we create it and
         copy the general_config.yaml file from the package folder to the config folder.
         
-        :return: None
+        Returns:
+            None
         """
         
         if not os.path.exists(self.folder_path):
@@ -101,7 +108,8 @@ class AutoSlurmConfig:
         included the copying the general_config.yaml file from the package folder to the config
         folder.
         
-        :return: None
+        Returns:
+            None
         """
         
         # ~ copy the general config
@@ -117,6 +125,11 @@ class AutoSlurmConfig:
         # that the user can use to store their own local config files for the aslurm command.
         # We'll configure Hydra to also look inside this folder!
         os.makedirs(self.configs_folder_path, exist_ok=True)
+        
+        # ~ create the "templates" folder
+        # We also want to create a "templates" folder within our own config folder that the
+        # user can use to store their own local jinja2 templates for the slurm scripts.
+        os.makedirs(self.templates_folder_path, exist_ok=True)
         
         # ~ copy the "main" base config
         # We need to copy the "main" base config file from the package folder to the configs 

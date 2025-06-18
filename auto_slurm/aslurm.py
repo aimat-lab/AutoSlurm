@@ -303,6 +303,12 @@ def main():
     )
 
     parser.add_argument(
+        "--list-configs",
+        action="store_true",
+        help="List all available configs and exit.",
+    )
+
+    parser.add_argument(
         "-gpt",
         "--gpus_per_task",
         type=str,
@@ -358,7 +364,7 @@ def main():
             )
         commands = ["bash -c '{ while true; do sleep 10000; done; }'"]
     else:
-        if len(commands) == 0:
+        if len(commands) == 0 and not args.list_configs:
             print("Error: No commands specified.")
             sys.exit(1)
 
@@ -372,6 +378,42 @@ def main():
             cfg, resolve=True, throw_on_missing=True
         )
         general_config: GeneralConfig = GeneralConfig(**cfg_dict)
+        
+    # ~ Config Discovery
+    # jt - 02.05.25
+    # Instead of using only the default config folder to search the hydra configs, there is now the 
+    # possibility of using a list of folders to discover the config files from.
+    # We use this to also search the custom "configs" folder in the ".config/auto_slurm/" location.
+    
+    config_source_paths: List[str] = [
+        # We put the custom folder first here such that we can use it to override the default configs 
+        # that are shipped with the package if we want to.
+        aslurm_config.configs_folder_path,
+        # This is the configs folder that is shipped with the package.
+        os.path.join(PATH, 'configs')
+    ]
+    
+    # ~ Listing Configs
+    # If --list-configs is specified, list all available configs and exit
+    if args.list_configs:
+        
+        print("Available AutoSlurm configs:")
+        available_configs = set()
+        for source_path in config_source_paths:
+            try:
+                # List all YAML files in the directory
+                yaml_files = [f for f in os.listdir(source_path) if f.endswith('.yaml')]
+                # Strip .yaml extension
+                config_names = [os.path.splitext(f)[0] for f in yaml_files]
+                available_configs.update(config_names)
+            except (FileNotFoundError, OSError):
+                continue
+        
+        # Sort and print configs
+        for config_name in sorted(available_configs):
+            print(f"  - {config_name}")
+            
+        sys.exit(0)
 
     if args.config is None:  # Get the config using the configured hostname mappings
         default_hostname_config_mappings = general_config.hostname_config_mappings
@@ -398,19 +440,9 @@ def main():
 
         print(f"Matched hostname '{hostname}' to config '{args.config}'.")
 
-    # jt - 02.05.25
-    # Instead of using only the default config folder to search the hydra configs, there is now the 
-    # possibility of using a list of folders to discover the config files from.
-    # We use this to also search the custom "configs" folder in the ".config/auto_slurm/" location.
-    
-    config_source_paths: List[str] = [
-        # We put the custom folder first here such that we can use it to override the default configs 
-        # that are shipped with the package if we want to.
-        aslurm_config.configs_folder_path,
-        # This is the configs folder that is shipped with the package.
-        os.path.join(PATH, 'configs')
-    ]
-
+    # ~ config loading
+    # We'll iterate over all of the config source paths and try to load the config with the given 
+    # name from each of them until we find one that works.
     config: Optional[Config] = None
     for source_path in config_source_paths:
         

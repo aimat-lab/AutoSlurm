@@ -17,11 +17,39 @@ requires-python = ">=3.7"
 dependencies = [
     "hydra-core", 
     "pydantic>=2.5.3", 
-    "appdirs>=1.0.0,<=2.0.0"
+    "appdirs>=1.0.0,<=2.0.0",
+    "rich_click>=1.8.0,<=2.0.0",
+    "jinja2>=3.0.0,<=4.0.0",
 ]
 
 [project.scripts]
 aslurm = "auto_slurm.aslurm:main"
+aslurmx = "auto_slurm.aslurmx:aslurm"
 
 [tool.setuptools.package-data]
-"auto_slurm" = ["general_config.yaml", "configs/*"]
+"auto_slurm" = ["general_config.yaml", "configs/*", "VERSION"]
+
+# Version Bumping
+# ===============
+
+[tool.bumpversion]
+current_version = "1.0.0"
+parse = "(?<![=<>])(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+serialize = ["{major}.{minor}.{patch}"]
+search = "{current_version}"
+replace = "{new_version}"
+regex = true
+ignore_missing_version = true
+tag = false
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+allow_dirty = true
+commit = false
+message = "Bump version: {current_version} → {new_version}"
+commit_args = ""
+files = [
+    {filename = "pyproject.toml", search="version = \"{current_version}\"", replace="version = \"{new_version}\""},
+    {filename = "README.rst"},
+    {filename = "auto_slurm/VERSION"},
+]
