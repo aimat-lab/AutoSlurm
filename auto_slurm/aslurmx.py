@@ -10,6 +10,7 @@ import rich
 import yaml
 import hydra
 import omegaconf
+from more_itertools import chunked
 from rich.pretty import pprint
 from rich.table import Table
 from rich.panel import Panel
@@ -41,13 +42,33 @@ class RichLogo:
 class RichHelp:
     
     def __rich_console__(self, console, options):
-        yield "AutoSlurm Command Line Interface.\n"
+        yield "AutoSlurm Command Line Interface X.\n"
         yield Text((
             "This is a tool to simplify the scheduling of SLURM jobs across different HPC environments. "
             "You can schedule a new slurm job using the 'cmd' command like this:"
         ))
         yield Padding(Syntax((
-            "aslurm -cn <config_name> cmd python script.py --arg1=100"
+            "aslurmx -cn <config_name> cmd python script.py --arg1=100"
+        ), lexer='bash', theme='monokai', line_numbers=False), (1, 5))
+        yield Text((
+            "Everything after the 'cmd' keyworkd will be used as the actual command to be scheduled in SLURM.\n"
+        ))
+        yield Text((
+            "For instance, the following command will schedule the script 'train.py' to be executed on the "
+            "BWUni cluster 3.0, using 20G of memory and by activating the conda environment 'myenv'"
+        ))
+        yield Padding(Syntax((
+            "aslurmx -cn bwuni_1gpu_a100 -o conda_env=myenv,mem=20G cmd python train.py"
+        ), lexer='bash', theme='monokai', line_numbers=False), (1, 5))
+        yield Text((
+            "You can even schedule multiple commands at the same time by using multiple 'cmd' commands and "
+            "also control how the available GPUs "
+            "should be distributed across those tasks. The following command will schedule two jobs, allocating "
+            "2 GPUs of a 4-GPU node to each task. The tasks will be executed in parallel, but still "
+            "be bundled in the same job:"  
+        ))
+        yield Padding(Syntax((
+            "aslurmx ---config=bwuni_4gpu_h100 --gpus-per-task=2 cmd python train.py cmd python train.py"
         ), lexer='bash', theme='monokai', line_numbers=False), (1, 5))
 
 class RichConfigList:
@@ -335,10 +356,15 @@ class ASlurm(click.RichGroup):
         
         # This method will make sure to create a new folder relative to the current working directory 
         # in which we can store the slurm scripts that are generated.
-        scripts_path: str = self.create_scipts_folder()
+        scripts_path: str = self.create_scipts_folder(self.options['archive_path'])
         click.echo(f'✅ created scripts folder @ {scripts_path}')
         
         # 4) job splitting
+        
+        # We use the default max_tasks value from the config unless it it superseded by a command line 
+        # option.
+        max_tasks: int | None = config.default_fillers.get('max_tasks')
+        max_tasks = self.options['max_tasks'] if self.options['max_tasks'] is not None else max_tasks
         
         # With this section we implement the command splitting logic. Either we put all the commands into a 
         # single job / slurm script (if `--same` is set) or we split them into multiple jobs.
@@ -347,7 +373,9 @@ class ASlurm(click.RichGroup):
         commands_list: list[list[str]] = []
         if self.options['same']:
             commands_list.append(commands)
-        else:
+        elif max_tasks is not None and max_tasks > 0:
+            commands_list = list(chunked(commands, max_tasks))
+        elif self.options['']:
             commands_list.extend([[command] for command in commands])
             
         # 5) script generation
@@ -493,18 +521,20 @@ class ASlurm(click.RichGroup):
         # in any of the possible locations...
         if config is None:
             raise FileNotFoundError(
-                f'There exists no AutoSlurm config file with the name "{args.config}"!. '
+                f'There exists no AutoSlurm config file with the name "{config_name}"!. '
                 f'Please check the list of available configs...'
             )
             
         return config
 
-    def create_scipts_folder(self) -> str:
+    def create_scipts_folder(self, path: str | None = None) -> str:
         """
         Creates a uniquely named scripts folder within a hidden '.aslurm' directory in the current working directory.
         The folder name is generated using the current date and time (formatted as 'YYYY-MM-DD_HH-MM-SS') 
         concatenated with the first 7 characters of a newly generated UUID, ensuring uniqueness for each invocation.
         
+        Args:
+            path (str): The base path where the '.aslurm' directory should be created.
         Returns:
             str: The absolute path to the newly created scripts folder.
         Side Effects:
@@ -519,8 +549,11 @@ class ASlurm(click.RichGroup):
             - The method uses the current working directory as the base path for folder creation.
         """
         
+        if path is None:
+            path = os.getcwd()
+        
         scripts_folder_path: str = os.path.join(
-            os.getcwd(),
+            path,
             '.aslurm',
             f'{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}_{str(uuid.uuid4())[0:7]}'
         )
@@ -528,12 +561,29 @@ class ASlurm(click.RichGroup):
         return scripts_folder_path
 
 
-@click.group(cls=ASlurm)
+@click.group(cls=ASlurm, invoke_without_command=True)
 @click.option('--config-name', '-cn', help='Config name to use for scheduling.')
-@click.option('--overwrite-fillers', '-o', type=KeyValueList(), default={}, help='overwrite fillers for the config.')
+@click.option('--overwrite-fillers', '-o', type=KeyValueList(), default={}, help=(
+    'overwrite fillers from the config. This should be a comma-separated list of key=value pairs - '
+    'e.g. time=01:00:00,mem=16G'
+))
 @click.option('--same', '-s', is_flag=True, help='Put all the commands into the same job.')
-@click.option('--gpus-per-task', '-gpt', type=int, default=None, help='Number of GPUs per task.')
-@click.option('--num-gpus', '-ng', type=int, default=None, help='Number of GPUs to use in total. If not set, will use all available GPUs.')
+@click.option('--gpus-per-task', '-gpt', type=int, default=None, show_default=True, help=(
+    'Number of GPUs per task. If set to a value greater than 0, the individual tasks within a job will '
+    'be allocated this number of GPUs using the CUDA_VISIBLE_DEVICES environment variable. '
+))
+@click.option('--num-gpus', '-ng', type=int, default=None, show_default=True, help=(
+    'Number of GPUs to use in total. If not set, will use all available GPUs.'
+))
+@click.option('--max-tasks', '-mt', type=int, default=4, show_default=True, help=(
+    'Maximum number of tasks per job. If this is set and the number of commands exceeds this value, '
+    'a new job will be created will be created for every `max_tasks` commands instead of putting them all into the same job.'
+))
+@click.option('--archive-path', type=click.Path(file_okay=False, dir_okay=True), 
+    default=os.getcwd(), show_default=True, help=(
+    'Path to the folder where the SLURM bash scripts will be created and archived. '
+    'If not set, the current working directory from which the command is run will be used.'
+))
 @click.option('--dry-run', '-d', is_flag=True, help='Do not actually submit the jobs, just print the commands that would be run.')
 @click.option('--version', '-v', is_flag=True, help='Show the version.')
 @click.pass_context
@@ -543,9 +593,18 @@ def aslurm(ctx: click.Context,
            same: bool,
            gpus_per_task: int | None,
            num_gpus: int | None,
+           max_tasks: int | None,
+           archive_path: str,
            dry_run: bool,
            version: bool,
            ) -> None:        
+
+    # For the --version flag we literally only print the version string and exit, much like the 
+    # help flag works.
+    if version:
+        version_string: str = get_version()
+        click.echo(version_string)
+        sys.exit(0)
 
     ctx.obj = ctx.command
     options = {
@@ -554,15 +613,12 @@ def aslurm(ctx: click.Context,
         'same':                 same,
         'gpus_per_task':        gpus_per_task, 
         'num_gpus':             num_gpus,
+        'max_tasks':            max_tasks,
+        'archive_path':         archive_path,
         'dry_run':              dry_run,
         'version':              version
     }
     ctx.command.options.update(options)
-    
-    if version:
-        version_string: str = get_version()
-        click.echo(version_string)
-        sys.exit(0)
         
 
 if __name__ == '__main__':

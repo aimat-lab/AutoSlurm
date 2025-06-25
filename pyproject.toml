@@ -11,6 +11,7 @@ version = "0.1.0"
 description = "Tool that writes slurm job scripts based on templates and starts them for you."
 authors = [
     {name = "Henrik Schopmans", email = "h.schopmans@gmail.com"},
+    {name = "Jonas Teufel", email = "jonseb1998@gmail.com"},
 ]
 readme = "README.md"
 requires-python = ">=3.7"
@@ -20,6 +21,7 @@ dependencies = [
     "appdirs>=1.0.0,<=2.0.0",
     "rich_click>=1.8.0,<=2.0.0",
     "jinja2>=3.0.0,<=4.0.0",
+    "more_itertools>=10.0.0,<=11.0.0",
 ]
 
 [project.scripts]

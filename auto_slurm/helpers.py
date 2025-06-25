@@ -85,7 +85,8 @@ def get_version() -> str:
     Returns:
         str: The version of the package.
     """
-    with open("VERSION", "r") as file:
+    version_path: str = os.path.join(PATH, "VERSION")
+    with open(version_path, "r") as file:
         version: str = file.read().strip()
         
     return version
