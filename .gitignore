@@ -3,3 +3,8 @@ auto_slurm/submit_scripts/
 .vscode/
 __pycache__
 auto_slurm.egg-info
+.aslurm/*
+tests/artifacts/
+slurm-*
+_*
+uv.lock
