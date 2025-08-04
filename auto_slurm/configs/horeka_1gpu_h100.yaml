@@ -7,7 +7,7 @@ default_fillers:
   job_name: "horeka"
   time: "48:00:00"
   cpus: "32"
-  mem: "193000mb"
+  mem: "192000mb"
   gres: "gpu:1"
 
 NO_gpus: 1
