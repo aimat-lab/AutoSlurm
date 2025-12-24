@@ -18,7 +18,7 @@ from auto_slurm.config import GeneralConfig
 from auto_slurm.config import AutoSlurmConfig
 
 # This is the absolute string path to the auto-slurm PACKAGE folder which has been
-# installed in the local python environment and can be used as the base path for 
+# installed in the local python environment and can be used as the base path for
 # accessing the "configs" folder, for example.
 PATH: str = pathlib.Path(__file__).parent.absolute()
 
@@ -159,16 +159,21 @@ def create_slurm_job_files(
         f.write(resume_slurm_script)
 
 
-def launch_slurm_job(slurm_file_path: str, job_index: int):
+def launch_slurm_job(
+    slurm_file_path: str, job_index: int, exclude_nodes: Optional[str] = None
+):
     """Submits a slurm job to the slurm queue.
 
     Args:
         slurm_file_path: The path to the slurm job file to submit.
         job_index: The index of the job.
+        exclude_nodes: Comma-separated list of nodes to exclude from the job allocation.
     """
 
     try:
         commands = ["sbatch"]
+        if exclude_nodes:
+            commands += [f"--exclude={exclude_nodes}"]
         commands += [slurm_file_path]
 
         result = subprocess.run(commands, capture_output=True, text=True, check=True)
@@ -342,13 +347,22 @@ def main():
         help="Start an interactive job that you can attach a bash shell to. Ignores all specified commands.",
     )
 
+    parser.add_argument(
+        "-x",
+        "--exclude",
+        type=str,
+        help="Comma-separated list of nodes to exclude from the job allocation (passed to sbatch --exclude).",
+        required=False,
+        default=None,
+    )
+
     # jt - 02.05.25
     # Replaced the manual creation of the config folder and the copying of the general_config.yaml file
     # with the new AutoSlurmConfig class that wraps this functionality.
     aslurm_config: AutoSlurmConfig = AutoSlurmConfig()
-    # This method will set up the config folder and do all of the other setup steps such as copying the 
+    # This method will set up the config folder and do all of the other setup steps such as copying the
     # general_config.yaml file to the config folder if it does not exist yet.
-    # However, this method will only do all of that if it is necessary, i.e. if the config folder does 
+    # However, this method will only do all of that if it is necessary, i.e. if the config folder does
     # not exist yet - otherwise it will not do anything.
     aslurm_config.setup_if_necessary()
 
@@ -378,41 +392,41 @@ def main():
             cfg, resolve=True, throw_on_missing=True
         )
         general_config: GeneralConfig = GeneralConfig(**cfg_dict)
-        
+
     # ~ Config Discovery
     # jt - 02.05.25
-    # Instead of using only the default config folder to search the hydra configs, there is now the 
+    # Instead of using only the default config folder to search the hydra configs, there is now the
     # possibility of using a list of folders to discover the config files from.
     # We use this to also search the custom "configs" folder in the ".config/auto_slurm/" location.
-    
+
     config_source_paths: List[str] = [
-        # We put the custom folder first here such that we can use it to override the default configs 
+        # We put the custom folder first here such that we can use it to override the default configs
         # that are shipped with the package if we want to.
         aslurm_config.configs_folder_path,
         # This is the configs folder that is shipped with the package.
-        os.path.join(PATH, 'configs')
+        os.path.join(PATH, "configs"),
     ]
-    
+
     # ~ Listing Configs
     # If --list-configs is specified, list all available configs and exit
     if args.list_configs:
-        
+
         print("Available AutoSlurm configs:")
         available_configs = set()
         for source_path in config_source_paths:
             try:
                 # List all YAML files in the directory
-                yaml_files = [f for f in os.listdir(source_path) if f.endswith('.yaml')]
+                yaml_files = [f for f in os.listdir(source_path) if f.endswith(".yaml")]
                 # Strip .yaml extension
                 config_names = [os.path.splitext(f)[0] for f in yaml_files]
                 available_configs.update(config_names)
             except (FileNotFoundError, OSError):
                 continue
-        
+
         # Sort and print configs
         for config_name in sorted(available_configs):
             print(f"  - {config_name}")
-            
+
         sys.exit(0)
 
     if args.config is None:  # Get the config using the configured hostname mappings
@@ -441,11 +455,11 @@ def main():
         print(f"Matched hostname '{hostname}' to config '{args.config}'.")
 
     # ~ config loading
-    # We'll iterate over all of the config source paths and try to load the config with the given 
+    # We'll iterate over all of the config source paths and try to load the config with the given
     # name from each of them until we find one that works.
     config: Optional[Config] = None
     for source_path in config_source_paths:
-        
+
         try:
             with hydra.initialize_config_dir(source_path, version_base=None):
                 cfg = hydra.compose(config_name=args.config)
@@ -454,16 +468,16 @@ def main():
                 )
                 config: Config = Config(**cfg_dict)
                 break
-            
+
         except hydra.errors.MissingConfigException as exc:
             continue
 
-    # If "config" remains None after the loop, that means that no config with the given name was found 
+    # If "config" remains None after the loop, that means that no config with the given name was found
     # in any of the possible locations...
     if config is None:
         raise FileNotFoundError(
             f'There exists no AutoSlurm config file with the name "{args.config}"!. '
-            f'Please check the list of available configs...'
+            f"Please check the list of available configs..."
         )
 
     if args.gpus_per_task != "":
@@ -472,7 +486,6 @@ def main():
         config.NO_gpus = parse_int_or_none(args.NO_gpus)
     if args.max_tasks != "":
         config.max_tasks = parse_int_or_none(args.max_tasks)
-        
 
     default_fillers = config.default_fillers
     if args.overwrite_fillers is not None:
@@ -520,7 +533,9 @@ def main():
         )
 
         if not args.dry:
-            job_id = launch_slurm_job(main_script_path, job_index=i)
+            job_id = launch_slurm_job(
+                main_script_path, job_index=i, exclude_nodes=args.exclude
+            )
 
             if job_id is not None and args.interactive:
                 print("You can attach a bash shell to the job using:")
