@@ -200,6 +200,31 @@ def launch_slurm_job(
         return None
 
 
+def split_top_level_commas(s: str):
+    parts = []
+    current = []
+    depth = 0
+
+    for ch in s:
+        if ch in "[{(":
+            depth += 1
+        elif ch in "]})":
+            depth -= 1
+            if depth < 0:
+                raise ValueError("Unbalanced brackets")
+        elif ch == "," and depth == 0:
+            parts.append("".join(current).strip())
+            current = []
+            continue
+        current.append(ch)
+
+    if depth != 0:
+        raise ValueError("Unbalanced brackets")
+
+    parts.append("".join(current).strip())
+    return parts
+
+
 def expand_commands(commands: List[str]) -> List[str]:
     expanded_commands = []
 
@@ -213,9 +238,10 @@ def expand_commands(commands: List[str]) -> List[str]:
 
         if bracket_matches:
             options = [
-                [subitem.strip() for subitem in item.split(",")]
+                [subitem.strip() for subitem in split_top_level_commas(item)]
                 for item in bracket_matches
             ]
+
             if any(len(opt) != len(options[0]) for opt in options):
                 raise ValueError("Paired lists must have the same length.")
 
@@ -227,7 +253,7 @@ def expand_commands(commands: List[str]) -> List[str]:
 
         elif brace_matches:
             options = [
-                [subitem.strip() for subitem in item.split(",")]
+                [subitem.strip() for subitem in split_top_level_commas(item)]
                 for item in brace_matches
             ]
 
