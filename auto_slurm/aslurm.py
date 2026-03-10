@@ -204,18 +204,22 @@ def split_top_level_commas(s: str):
     parts = []
     current = []
     depth = 0
+    in_quotes = False
 
     for ch in s:
-        if ch in "[{(":
-            depth += 1
-        elif ch in "]})":
-            depth -= 1
-            if depth < 0:
-                raise ValueError("Unbalanced brackets")
-        elif ch == "," and depth == 0:
-            parts.append("".join(current).strip())
-            current = []
-            continue
+        if ch == '"' and depth == 0:
+            in_quotes = not in_quotes
+        elif not in_quotes:
+            if ch in "[{(":
+                depth += 1
+            elif ch in "]})":
+                depth -= 1
+                if depth < 0:
+                    raise ValueError("Unbalanced brackets")
+            elif ch == "," and depth == 0:
+                parts.append("".join(current).strip())
+                current = []
+                continue
         current.append(ch)
 
     if depth != 0:
