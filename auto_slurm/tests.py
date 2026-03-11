@@ -74,6 +74,20 @@ class TestSlurmScript(unittest.TestCase):
         self.assertIn("CUDA_VISIBLE_DEVICES=2,3", main_contents)
         self.assertIn("CUDA_VISIBLE_DEVICES=2,3", resume_contents)
 
+    def test_expand_commands_braces_with_commas_in_values(self):
+        commands = [
+            'python train.py --features \'<{"partial_charges", "partial_charges,x", "x"}>\' --lr <{1e-3,1e-4}>'
+        ]
+        expected = [
+            'python train.py --features \'"partial_charges"\' --lr 1e-3',
+            'python train.py --features \'"partial_charges"\' --lr 1e-4',
+            'python train.py --features \'"partial_charges,x"\' --lr 1e-3',
+            'python train.py --features \'"partial_charges,x"\' --lr 1e-4',
+            'python train.py --features \'"x"\' --lr 1e-3',
+            'python train.py --features \'"x"\' --lr 1e-4',
+        ]
+        self.assertEqual(expand_commands(commands), expected)
+
     def test_expand_commands_invalid_syntax(self):
         commands = ["python train.py --lr <[0.01,0.1]> --batch_size <{32,64}>"]
         with self.assertRaises(ValueError):
